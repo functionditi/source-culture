@@ -1,6 +1,6 @@
 # Source Culture
 
-A working **local demo** of a collective notebook of everyday knowledge. Built with semantic HTML, plain CSS, vanilla JavaScript ES modules, and a small p5.js pattern study. There is no frontend framework or build step.
+A collective notebook of everyday knowledge, with a full local app and a read-only GitHub Pages export. Built with semantic HTML, plain CSS, vanilla JavaScript ES modules, and a small p5.js pattern study. There is no frontend framework; only the Pages export needs a build step.
 
 The supplied fonts, primary palette (`palette/image copy.png`), and all three visual references inform the design. See [DESIGN-NOTES.md](DESIGN-NOTES.md).
 
@@ -16,6 +16,31 @@ Local-demo JavaScript and CSS revalidate on each visit. The changed image/grid m
 
 The supplied homepage copy is arranged as a definition and four readings in column 1, a shared project repository in columns 2–3, and contribution guidance in column 4. The central columns take their featured project titles (“experiments with rice” and “Prāsa”) beneath one shared repository introduction. Repository filters select projects, practices, and experiments, updating those titles to match. The definition field carries the visitor's own text into the moderated contribution form; it does not submit or publish it automatically. The rice project has a local detail page, and Prāsa links to Dhulipalla's article.
 
+## Publish the read-only version to GitHub Pages
+
+The Pages version includes the two curated projects, four readings, processed project images, search, filters, and appearance controls. It does not run Python or SQLite, accept submissions, or provide sign-in/editor access. Fictional development examples and private runtime data are excluded. The full local app described below keeps its existing API and contribution flow.
+
+1. Push these changes to `main`.
+2. In the repository, open **Settings → Pages → Build and deployment** and set **Source** to **GitHub Actions**. The previous “Deploy from a branch” setup serves the unbuilt app, whose root-relative assets and API do not work at `/source-culture/`.
+3. Run **Actions → Deploy notebook to GitHub Pages → Run workflow**, or push another change to `main`. The workflow builds `dist/` and deploys it to **https://functionditi.github.io/source-culture/**.
+
+To build the same files locally with Python and Pillow installed:
+
+```sh
+npm run build:pages
+# Equivalent: python3 -m server.build_pages --base-path /source-culture/
+```
+
+Only `dist/` is a deployable static site. Each known route has its own `index.html`, so direct project/source links and refreshes work on Pages. Assets, font URLs, navigation, filters, and copied citations respect the project path. A different static host can use `--base-path /`. To preview the project path locally, put the output under a temporary server root:
+
+```sh
+python3 -m server.build_pages --output /tmp/source-culture-preview/source-culture
+python3 -m http.server 8001 --directory /tmp/source-culture-preview
+# Open http://localhost:8001/source-culture/
+```
+
+Change `data/editorial.json` and the supplied project assets to update the public notebook. The export reads these curated inputs directly, never the local database, outbox, uploads, or development fixtures. `dist/` is generated and ignored by Git.
+
 ## Run locally
 
 Requires Python 3.11+ and Pillow. Node is optional; npm scripts are convenient aliases for Python commands.
@@ -30,7 +55,7 @@ Open **http://127.0.0.1:8000**. If Pillow is already installed, `EDITOR_EMAILS=e
 
 In VS Code, **Terminal → Run Task → Source Culture: start app** runs the same server. Live Server’s “Go Live” button only serves files and does not run the Python API. A page opened on port 5502 will therefore receive an HTML 404 for `/api/config`. The site now explains this and offers an “open the local app” link instead of showing a JSON parser error. Run the app and use port 8000 for browsing, submissions, and private management.
 
-The server handles all documented routes and deep-link refreshes: `/`, `/explore`, `/practices/[slug]`, `/contribute`, `/sources`, `/sources/[id]`, `/about`, `/manage`, and `/admin`. This is not a static-only application: putting only `index.html` on a static host will not provide its API. A reverse proxy must forward the complete application, including `/api` and `/media`.
+The server handles all documented routes and deep-link refreshes: `/`, `/explore`, `/practices/[slug]`, `/contribute`, `/sources`, `/sources/[id]`, `/about`, `/manage`, and `/admin`. The full application needs its API; putting only `index.html` on a static host will not provide it. A reverse proxy for the full app must forward `/api` and `/media`. For static hosting, use the read-only export above.
 
 ## Try the complete flow
 
@@ -109,7 +134,7 @@ See [docs/VERIFICATION.md](docs/VERIFICATION.md) for the checked behaviors and l
 
 ## Production connections still required
 
-This checkout is **not publicly deployed** and the standard-library HTTP server is a local development server. `APP_MODE=production` is a data-isolation/SMTP integration mode, not a claim of completed production hosting.
+The full application backend is **not publicly deployed** and the standard-library HTTP server is a local development server. The read-only Pages export is separate. `APP_MODE=production` is a data-isolation/SMTP integration mode, not a claim of completed production hosting.
 
 Before launch, supply:
 

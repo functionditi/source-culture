@@ -2,6 +2,7 @@ import { api } from '../api.js';
 import { e, safeURL } from '../ui.js';
 import { mountPattern } from '../sketches/pattern-study.js';
 import { mountReadingRoom } from '../reading-room.js?v=prasa-background-grid-1';
+import { appURL } from '../paths.js';
 
 const illustrationNames = ['rice', 'knit', 'clap', 'route', 'turns', 'cups'];
 const paragraphs = text => String(text || '').split(/\n\s*\n/).filter(Boolean).map(text => `<p dir="auto">${e(text)}</p>`).join('');
@@ -24,7 +25,7 @@ function entryFigure(entry) {
   </figure>`;
   if (!illustrationNames.includes(entry.illustration)) return '';
   return `<figure class="notebook-figure">
-    <a href="/practices/${e(entry.slug)}" aria-label="Read ${e(entry.title)}"><img src="/assets/illustrations/${entry.illustration}.svg" alt="" loading="lazy" width="420" height="290"></a>
+    <a href="/practices/${e(entry.slug)}" aria-label="Read ${e(entry.title)}"><img src="${appURL('/assets/illustrations/' + entry.illustration + '.svg')}" alt="" loading="lazy" width="420" height="290"></a>
     <figcaption>illustration of a fictional development scenario</figcaption>
   </figure>`;
 }
@@ -65,10 +66,10 @@ function column(id, label, index, content, level = 2) {
 
 export function projectMedia(entry) {
   if (entry.placeholder === 'rice-grid') return `<figure class="project-media">
-    <img src="/project-images/experiments-with-rice.JPG" alt="Hands arranging piles of rice grains on a metal tray." width="1350" height="1800" loading="lazy">
+    <img src="${e(appURL(entry.project_image || '/project-images/experiments-with-rice.JPG'))}" alt="Hands arranging piles of rice grains on a metal tray." width="1350" height="1800" loading="lazy">
   </figure>`;
   if (entry.placeholder === 'prasa') return `<figure class="project-media">
-    <img src="/project-images/prasa-example.png" alt="White poetic text arranged across a textured olive-green background." width="1800" height="1219" loading="lazy">
+    <img src="${e(appURL(entry.project_image || '/project-images/prasa-example.png'))}" alt="White poetic text arranged across a textured olive-green background." width="1800" height="1219" loading="lazy">
   </figure>`;
   return entryFigure(entry);
 }
@@ -109,10 +110,10 @@ export async function notebookHome(root, config, navigate) {
       <p>Vernacular computing considers how computation is shaped by the places, cultures, and everyday practices through which people make and share knowledge.</p>
       <p>Koundinya Dhulipalla (<a href="${paperURL}" target="_blank" rel="noopener noreferrer">source</a>) approaches it through culturally situated traditions, exploring how oral, poetic, and embodied knowledge can inform programming. Melanie Swalwell’s related concept of <a href="${swalwellURL}" target="_blank" rel="noopener noreferrer"><em>vernacular digitality</em></a> examines how people make digital technology their own through homebrew games, experimentation, and hardware hacking.</p>
     </div>
-    <form class="definition-suggestion" id="definition-suggestion">
+    ${config.mode === 'static' ? '<p class="notice">This notebook is read-only. Explore the projects and readings; contributions are not open on this site.</p>' : `<form class="definition-suggestion" id="definition-suggestion">
       <label for="your-definition">have a definition of your own? Let us know:</label>
       <div><textarea id="your-definition" name="definition" rows="2" maxlength="2000" required aria-label="Your definition of vernacular computing"></textarea><button type="submit" aria-label="Continue with your definition suggestion">→</button></div>
-    </form>
+    </form>`}
     <section class="notebook-block notebook-prose">
       <h2 class="notebook-subheading">what does it mean here?</h2>
       <p>What might a recipe, a weaving pattern, a poem, or a homemade game reveal about how we organise information and work with rules?</p>
@@ -136,7 +137,7 @@ export async function notebookHome(root, config, navigate) {
   const overview = `<section class="repository-overview" id="notebook-repository" data-focus-column="notebook-collection" aria-labelledby="repository-title">
     <h2 id="repository-title">a growing repository</h2>
     <p>Projects, experiments, and everyday practices exploring the relationships between computation, culture, and situated knowledge.</p>
-    <p>Browse an approach, follow its sources, or contribute something it brings to mind.</p>
+    <p>${config.mode === 'static' ? 'Browse an approach and follow its sources.' : 'Browse an approach, follow its sources, or contribute something it brings to mind.'}</p>
     <div class="repository-filters" role="group" aria-label="Repository entry type">
       ${[['all', 'explore all'], ['project', 'projects'], ['practice', 'practices'], ['experiment', 'experiments']].map(([value, label]) => `<button type="button" data-repository-filter="${value}" aria-pressed="${filter === value}">${label}</button>`).join('')}
     </div>
@@ -147,8 +148,7 @@ export async function notebookHome(root, config, navigate) {
   const invitation = `<section class="repository-invitation notebook-prose">
     ${right.length ? `<h2 class="notebook-subheading">${invitationTitle}</h2>` : ''}
     <p>A project you’re making. A practice you’ve learned. A system someone devised for an everyday task.</p>
-    <p>Help this collection grow.</p>
-    <p><a href="/contribute?type=practice">share something you know →</a></p>
+    ${config.mode === 'static' ? '<p>This version is read-only. Follow the projects and sources already in the notebook.</p><p><a href="/sources">browse the reading shelf →</a></p>' : '<p>Help this collection grow.</p><p><a href="/contribute?type=practice">share something you know →</a></p>'}
   </section>`;
   const pattern = `<details class="repository-pattern notebook-block">
     <summary>a small pattern study</summary><p>Illustrative experiment, not project documentation.</p>
@@ -162,7 +162,7 @@ export async function notebookHome(root, config, navigate) {
   const cards = entries => entries.map((entry, index) => projectCard(entry, { heading: index > 0 })).join('');
   const collection = `${cards(left)}${!shown.length ? '<p class="repository-empty">No ' + e(filter === 'all' ? 'entries' : filter + 's') + ' published here yet.</p>' : ''}`;
   const projects = `${cards(right)}${invitation}${pattern}`;
-  const contribute = `<div class="notebook-prose">
+  const contribute = config.mode === 'static' ? `<div class="notebook-prose"><p>This notebook brings together projects, everyday practices, and readings about computation and culture.</p><p>This version is read-only. Contributions, source suggestions, corrections, and editor access are not open here.</p><p><a href="/explore">explore the collection →</a></p><p><a href="/sources">browse the reading shelf →</a></p></div>` : `<div class="notebook-prose">
       <p>what do you know how to do—and how did you learn it?</p>
       <p>Share a project, an everyday practice, or a reference that opens another way of thinking about computation.</p>
       <p>You don’t need to write code or have a finished project.</p>
@@ -195,14 +195,14 @@ export async function notebookHome(root, config, navigate) {
       <button type="button" data-column-jump="notebook-introduction">01 about</button>
       <button type="button" data-column-jump="notebook-repository">02 repository</button>
       <button type="button" data-column-jump="notebook-variations">03 ${right[0] ? e(right[0].title) : 'add an entry'}</button>
-      <button type="button" data-column-jump="notebook-connections">04 contribute</button>
+      <button type="button" data-column-jump="notebook-connections">04 ${config.mode === 'static' ? 'this notebook' : 'contribute'}</button>
     </nav>
     <div class="reading-room repository-room" data-reading-room data-initial-column="${filter === 'all' ? 0 : 1}" aria-label="Project framing, repository, and contributions">
       ${column('notebook-introduction', 'what is vernacular computing?', 0, introduction, 1)}
       ${overview}
       ${column('notebook-collection', collectionTitle, 1, collection)}
       ${column('notebook-variations', projectsTitle, 2, projects)}
-      ${column('notebook-connections', 'contribute', 3, contribute)}
+      ${column('notebook-connections', config.mode === 'static' ? 'this notebook' : 'contribute', 3, contribute)}
     </div>`;
   const disposeColumns = mountReadingRoom(root);
   const disposePattern = mountPattern(root);
@@ -210,7 +210,7 @@ export async function notebookHome(root, config, navigate) {
     const value = button.dataset.repositoryFilter;
     navigate(value === 'all' ? '/' : '/?view=' + value, { scroll: false });
   }));
-  root.querySelector('#definition-suggestion').addEventListener('submit', event => {
+  root.querySelector('#definition-suggestion')?.addEventListener('submit', event => {
     event.preventDefault();
     const account = new FormData(event.currentTarget).get('definition').trim();
     if (!account) return;

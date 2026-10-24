@@ -5,3 +5,4 @@ __pycache__/
 .runtime/
 test-results/
 node_modules/
+dist/

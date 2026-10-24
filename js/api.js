@@ -1,5 +1,6 @@
 // This is the only module that knows the backend URL and session transport.
-// Demo and production use the same persistent API; there is no localStorage fallback.
+// The Pages export explicitly selects a public, read-only snapshot.
+// The full app never falls back to static data after an API failure.
 let csrf = null;
 
 export class BackendUnavailableError extends Error {
@@ -27,6 +28,10 @@ export async function readResponse(response) {
 }
 
 export async function api(path, body) {
+  if (globalThis.document?.querySelector('meta[name="app-mode"]')?.content === 'static') {
+    const { staticAPI } = await import('./static-api.js');
+    return staticAPI(path, body);
+  }
   const response = await fetch(`/api${path}`, {
     method: body === undefined ? 'GET' : 'POST',
     credentials: 'same-origin',

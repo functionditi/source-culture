@@ -7,7 +7,8 @@
     "dev": "python3 server/app.py",
     "start": "python3 server/app.py",
     "images:build": "python3 -m server.project_images",
-    "test": "python3 -m unittest discover -s tests -v && node --test tests/test_client.mjs",
-    "test:client": "node --test tests/test_client.mjs"
+    "build:pages": "python3 -m server.build_pages",
+    "test": "python3 -m unittest discover -s tests -v && node --test tests/test_*.mjs",
+    "test:client": "node --test tests/test_*.mjs"
   }
 }

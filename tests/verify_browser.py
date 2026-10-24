@@ -199,7 +199,7 @@ def run():
                 screenshot('prasa-image-home.png', 1440, 1100)
                 for category, title in [('project', 'Prāsa'), ('experiment', 'experiments with rice'), ('practice', 'nothing here yet')]:
                     c.click(f'[data-repository-filter={category}]')
-                    c.wait(f'location.search.includes("view={category}") && document.querySelector("[data-repository-filter={category}]").getAttribute("aria-pressed") === "true"')
+                    c.wait(f'location.search.includes("view={category}") && document.querySelector("[data-repository-filter={category}]")?.getAttribute("aria-pressed") === "true"')
                     repository_headings([title, 'what belongs here next?'])
                 c.click('[data-repository-filter=all]')
                 c.wait('document.querySelectorAll("[data-notebook-entry]").length === 2')

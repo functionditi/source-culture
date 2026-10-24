@@ -1,3 +1,5 @@
+import { appURL } from './paths.js';
+
 export const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 export const e = escapeHTML;
 export function safeURL(value) {
@@ -22,7 +24,7 @@ export function heading(title, description = '', eyebrow = 'the collective noteb
 export function card(entry, index = 0) {
   const image = entry.media?.[0];
   const art = ['rice', 'knit', 'clap', 'route', 'turns', 'cups'].includes(entry.illustration) ? entry.illustration : null;
-  const visual = image ? `<img src="${e(image.url)}" alt="${e(image.alt)}" loading="lazy" width="420" height="280">` : art ? `<img src="/assets/illustrations/${art}.svg" alt="" loading="lazy" width="420" height="290"><span class="image-label">illustration · fictional scenario</span>` : `<div class="text-art"><span class="star" aria-hidden="true">✳</span><blockquote>${e(entry.title)}</blockquote></div><span class="image-label">a written account</span>`;
+  const visual = image ? `<img src="${e(image.url)}" alt="${e(image.alt)}" loading="lazy" width="420" height="280">` : art ? `<img src="${appURL('/assets/illustrations/' + art + '.svg')}" alt="" loading="lazy" width="420" height="290"><span class="image-label">illustration · fictional scenario</span>` : `<div class="text-art"><span class="star" aria-hidden="true">✳</span><blockquote>${e(entry.title)}</blockquote></div><span class="image-label">a written account</span>`;
   return `<article class="entry-card"><a class="media-link" href="/practices/${e(entry.slug)}" aria-label="Read ${e(entry.title)}">${visual}<span class="card-index" aria-hidden="true">${String(index + 1).padStart(2, '0')} ↗</span></a><div class="card-body"><div class="card-meta"><span>${entry.relationship === 'source-based research' ? 'source-based account' : 'personal account'}${entry.kind === 'variation' ? ' · variation' : ''}</span>${entry.demo ? '<span>illustrative demo</span>' : ''}</div><h3><a href="/practices/${e(entry.slug)}">${e(entry.title)}</a><span aria-hidden="true">↗</span></h3><p>${e(entry.summary)}</p><div class="card-bottom"><span>${e(entry.display_name)}</span><div class="card-tags">${(entry.tags || []).slice(0, 2).map(t => `<a class="tag" href="/explore?tag=${encodeURIComponent(t)}">${e(t)}</a>`).join('')}</div></div></div></article>`;
 }
 export function empty(title, text) {

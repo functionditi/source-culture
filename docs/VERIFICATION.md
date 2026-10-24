@@ -1,5 +1,7 @@
 # Verification record
 
+GitHub Pages follow-up, 24 October 2026: the read-only export passes all **26 Python and 6 JavaScript tests**. `python3 tests/verify_pages_browser.py` passes against a plain static server at `/source-culture/`, with no application backend. Chrome checks CSS, fonts, both processed project images, project filters, search and refresh, direct detail links, citation URLs, four source records, read-only contribution/account pages, and layouts at 1440, 390, and 320 px. No API requests or JavaScript exceptions occur. Desktop and mobile screenshots were visually inspected. The export contains only curated editorial data and selected frontend assets; database, outbox, uploads, and fictional fixtures are excluded. GitHub Pages must use **GitHub Actions** as its publishing source for `.github/workflows/pages.yml`.
+
 Verified locally on 23–24 October 2026. No public deployment was performed. Tests use temporary databases and do not alter the working demo collection.
 
 Follow-up startup fix: four JavaScript client regression tests cover HTML 404/200 responses, valid JSON, server validation errors, malformed JSON, and preservation of failed submissions without retries or browser-storage fallback. The browser script also reproduces a static preview returning HTML for `/api/config`, checks the recovery screen, then enables the API and verifies the retry loads the collection. Use `npm run dev` / the VS Code “Source Culture: start app” task; Live Server alone cannot run the backend.

@@ -1,4 +1,5 @@
 import { e, date, safeURL, sourceReference, copy, link } from './ui.js';
+import { appURL } from './paths.js';
 
 export function referencesHTML(entry, sources) {
   return `<ol class="reference-list">${(entry.citations || []).map((c, i) => {
@@ -8,7 +9,7 @@ export function referencesHTML(entry, sources) {
   }).join('')}</ol>`;
 }
 export function citeDisclosure(entry) {
-  return `<details class="citation-disclosure"><summary>cite this entry</summary><p id="entry-citation">${e(entry.display_name)}. “${e(entry.title)}.” Source Culture, ${date(entry.updated_at)}. Revision ${entry.revision}. ${e(location.origin + '/practices/' + entry.slug)}</p><button class="button small" id="copy-citation">copy citation ↗</button></details>`;
+  return `<details class="citation-disclosure"><summary>cite this entry</summary><p id="entry-citation">${e(entry.display_name)}. “${e(entry.title)}.” Source Culture, ${date(entry.updated_at)}. Revision ${entry.revision}. ${e(location.origin + appURL('/practices/' + entry.slug))}</p><button class="button small" id="copy-citation">copy citation ↗</button></details>`;
 }
 export function bindCitation(root) {
   root.querySelector('#copy-citation')?.addEventListener('click', event => copy(root.querySelector('#entry-citation').textContent, event.currentTarget));
