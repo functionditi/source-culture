@@ -62,6 +62,8 @@ def build(output, base_path='/source-culture/'):
                         f'<meta name="app-base" content="{base_path}">\n  <meta name="app-mode" content="static">')
     page = re.sub(r'(\b(?:href|src)=")/(?!/)', lambda match: match[1] + base_path, page)
     page = page.replace('Please enable JavaScript to explore this local demo.', 'Please enable JavaScript to explore this notebook.')
+    page = page.replace('  <header class="site-header">',
+                        '  <div class="demo-banner" id="site-notice">this site is a work in progress. contribution submissions are coming soon!</div>\n  <header class="site-header">')
     routes = ['', 'explore', 'sources', 'about', 'contribute', 'manage', 'admin']
     routes += [f'practices/{entry["slug"]}' for entry in data['practices']]
     routes += [f'sources/{entry["slug"]}' for entry in data['sources']]
