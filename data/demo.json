@@ -1,0 +1,231 @@
+{
+  "notice": "FICTIONAL DEVELOPMENT CONTENT. Excluded whenever APP_MODE=production. No invented testimony is represented as real.",
+  "sources": [
+    {
+      "id": "demo-source-note",
+      "slug": "illustrative-rice-scenario",
+      "kind": "source",
+      "date": "2026-10-20T12:00:00+00:00",
+      "content": {
+        "title": "Illustrative scenario 01: a fingertip measure",
+        "display_name": "Source Culture demo editor (fictional)",
+        "tags": [
+          "food and cooking"
+        ],
+        "source": {
+          "type": "other",
+          "custom_type": "fictional development scenario",
+          "title": "Illustrative scenario 01: a fingertip measure",
+          "creators": "Source Culture demo team (fictional attribution)",
+          "date": "",
+          "language": "English",
+          "url": "",
+          "annotation": "An explicitly invented scenario for testing how a source connects to a specific passage. No interview was conducted. This is not a bibliographic reference or evidence of a cultural practice.",
+          "locator": "scenario 01",
+          "recording": "",
+          "relation": "documents this practice"
+        },
+        "fictional": true
+      }
+    }
+  ],
+  "practices": [
+    {
+      "id": "demo-rice-water",
+      "slug": "rice-water",
+      "date": "2026-10-20T12:00:00+00:00",
+      "content": {
+        "title": "measuring with a fingertip",
+        "summary": "A familiar hand becomes a measure. A small adjustment, each time the pot changes.",
+        "original_name": "",
+        "language": "English",
+        "context": "In this fictional example, a cook learns by watching a relative rather than reading a recipe. The account describes one household routine, not a rule for any community.",
+        "relationship": "learned from someone",
+        "account": "Level the rice in the pot. Rest a fingertip on the surface, then add water to a familiar point on the finger. Adjust for the pot and the rice.",
+        "judgement": "The useful measure comes from trying, tasting, and remembering. A different pot or grain can change what works.",
+        "display_name": "Mira · fictional demo contributor",
+        "tags": [
+          "food and cooking",
+          "measurement and estimation"
+        ],
+        "illustration": "rice",
+        "materials": "",
+        "steps": "",
+        "references": [],
+        "reuse": "illustrative development content; no collection-wide reuse licence",
+        "interpretation": {
+          "author": "Source Culture demo editor (fictional)",
+          "text": "One possible reading is measurement through a bodily reference, followed by adjustment from experience. This describes one aspect of the scenario; it does not explain the whole practice."
+        },
+        "fictional": true
+      },
+      "citations": [
+        {
+          "block_id": "account",
+          "source_id": "demo-source-note",
+          "relationship": "documents this practice",
+          "locator": "scenario 01, written account",
+          "annotation": "This internal fictional scenario is the basis for the demonstration. It is not research evidence or a real interview."
+        }
+      ]
+    },
+    {
+      "id": "demo-knitting-repeat",
+      "slug": "knitting-repeat",
+      "date": "2026-10-19T12:00:00+00:00",
+      "content": {
+        "title": "one row, then another",
+        "summary": "Keeping a small repeating pattern in your hands, without keeping count of everything.",
+        "original_name": "",
+        "language": "English",
+        "context": "This fictional contributor practises a small knitting repeat, using the feel of the last stitch as a reminder of the next.",
+        "relationship": "personal experience",
+        "account": "Work a short sequence of knit and purl stitches. Look at the row below before starting the next repeat. Pause when the surface stops matching the expected pattern.",
+        "judgement": "The texture acts as a check. A misplaced stitch can be found by looking back, rather than counting every stitch.",
+        "display_name": "Alex · fictional demo contributor",
+        "tags": [
+          "craft and making",
+          "repetition"
+        ],
+        "illustration": "knit",
+        "materials": "",
+        "steps": "",
+        "references": [],
+        "reuse": "illustrative development content; no collection-wide reuse licence",
+        "fictional": true
+      }
+    },
+    {
+      "id": "demo-clapping-sequence",
+      "slug": "clapping-sequence",
+      "date": "2026-10-18T12:00:00+00:00",
+      "content": {
+        "title": "a rhythm learned by watching",
+        "summary": "Listen, copy, miss a beat, try again. A sequence remembered together.",
+        "original_name": "",
+        "language": "English",
+        "context": "An invented scenario of two friends learning a clapping game by copying each other. No particular traditional game is being documented.",
+        "relationship": "observation",
+        "account": "Start with a clap. Tap hands with a partner. Clap twice, pause, and repeat. Slow down together when the sequence slips.",
+        "judgement": "Success is a shared rhythm, rather than a fixed speed. A pause gives both players a way back into the sequence.",
+        "display_name": "Sam · fictional demo contributor",
+        "tags": [
+          "games and play",
+          "sequencing"
+        ],
+        "illustration": "clap",
+        "materials": "",
+        "steps": "",
+        "references": [],
+        "reuse": "illustrative development content; no collection-wide reuse licence",
+        "fictional": true
+      }
+    },
+    {
+      "id": "demo-landmark-directions",
+      "slug": "landmark-directions",
+      "date": "2026-10-17T12:00:00+00:00",
+      "content": {
+        "title": "turn where the road gets quiet",
+        "summary": "Remembering a route through landmarks, sounds, and the shape of a corner.",
+        "original_name": "",
+        "language": "English",
+        "context": "This fictional walk is remembered through a sequence of noticeable changes. It is not an account of a real neighbourhood.",
+        "relationship": "personal experience",
+        "account": "Walk to the large tree, turn at the narrow passage, and listen for the quieter street. Describe the route again after walking it.",
+        "judgement": "A landmark can change. Remembering several cues gives another way to recognise the same turn.",
+        "display_name": "Rae · fictional demo contributor",
+        "tags": [
+          "navigation and place",
+          "memory and retrieval"
+        ],
+        "illustration": "route",
+        "materials": "",
+        "steps": "",
+        "references": [],
+        "reuse": "illustrative development content; no collection-wide reuse licence",
+        "fictional": true
+      }
+    },
+    {
+      "id": "demo-taking-turns",
+      "slug": "taking-turns",
+      "date": "2026-10-16T12:00:00+00:00",
+      "content": {
+        "title": "a place in the circle",
+        "summary": "An object moves from hand to hand, carrying the next turn with it.",
+        "original_name": "",
+        "language": "English",
+        "context": "An illustrative group uses a small object to make the order of turns visible. This is a fictional example, not a claim of origin.",
+        "relationship": "personal experience",
+        "account": "Choose an order together. Give the object to the first person. Pass it along after each turn. Agree what happens when someone skips.",
+        "judgement": "The object makes the current turn visible; the group still negotiates pauses and exceptions.",
+        "display_name": "Jo · fictional demo contributor",
+        "tags": [
+          "everyday coordination",
+          "distribution and coordination"
+        ],
+        "illustration": "turns",
+        "materials": "",
+        "steps": "",
+        "references": [],
+        "reuse": "illustrative development content; no collection-wide reuse licence",
+        "fictional": true
+      }
+    },
+    {
+      "id": "demo-recipe-memory",
+      "slug": "recipe-memory",
+      "date": "2026-10-15T12:00:00+00:00",
+      "content": {
+        "title": "the recipe that isn’t written down",
+        "summary": "Remembering the order by the way ingredients feel, sound, and change.",
+        "original_name": "",
+        "language": "English",
+        "context": "A fictional account of learning a simple dish through repeated practice. The description is intentionally incomplete as a cooking recipe.",
+        "relationship": "learned from someone",
+        "account": "Notice each change as the ingredients cook. Use those changes to remember when to take the next action.",
+        "judgement": "Smell, texture, and sound can be useful cues. This imagined account cannot stand in for the judgement of an experienced cook.",
+        "display_name": "Noor · fictional demo contributor",
+        "tags": [
+          "remembering and recording",
+          "pattern recognition"
+        ],
+        "illustration": "text",
+        "materials": "",
+        "steps": "",
+        "references": [],
+        "reuse": "illustrative development content; no collection-wide reuse licence",
+        "fictional": true
+      }
+    },
+    {
+      "id": "demo-rice-cup",
+      "slug": "rice-cup",
+      "date": "2026-10-14T12:00:00+00:00",
+      "content": {
+        "title": "the same cup, every time",
+        "summary": "Another way to find the balance: a familiar cup and a remembered proportion.",
+        "original_name": "",
+        "language": "English",
+        "context": "A fictional variation on the fingertip example. Here, the contributor keeps the container constant instead of using a hand as a reference.",
+        "relationship": "personal experience",
+        "account": "Use one familiar cup for the rice and the water. Begin with the proportion that worked last time. Make a note when the grain or pot changes.",
+        "judgement": "The consistency comes partly from returning to the same cup. The result still needs to be checked.",
+        "display_name": "Ellis · fictional demo contributor",
+        "tags": [
+          "food and cooking",
+          "counting and comparison"
+        ],
+        "illustration": "cups",
+        "materials": "",
+        "steps": "",
+        "references": [],
+        "reuse": "illustrative development content; no collection-wide reuse licence",
+        "fictional": true
+      },
+      "kind": "variation",
+      "parent_id": "demo-rice-water"
+    }
+  ]
+}

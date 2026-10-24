@@ -1,0 +1,90 @@
+/* Palette: palette/image copy.png. See DESIGN-NOTES.md for the swatch-label exception. */
+@font-face {
+  font-family:"Mori";
+  src:url("/assets/fonts/PPMori-Regular_2.otf") format("opentype");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face {
+  font-family:"Mori";
+  src:url("/assets/fonts/PPMori-Semibold.otf") format("opentype");
+  font-weight:600;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face {
+  font-family:"Mori";
+  src:url("/assets/fonts/PPMori-RegularItalic.otf") format("opentype");
+  font-weight:400;
+  font-style:italic;
+  font-display:swap;
+}
+@font-face {
+  font-family:"Mori";
+  src:url("/assets/fonts/PPMori-SemiboldItalic.otf") format("opentype");
+  font-weight:600;
+  font-style:italic;
+  font-display:swap;
+}
+@font-face {
+  font-family:"Editorial New";
+  src:url("/assets/fonts/PPEditorialNew-Regular-BF644b214ff145f.otf") format("opentype");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face {
+  font-family:"Editorial New";
+  src:url("/assets/fonts/PPEditorialNew-Italic-BF644b214fb0c0a.otf") format("opentype");
+  font-weight:400;
+  font-style:italic;
+  font-display:swap;
+}
+:root {
+  --paper:#F4F4F4;
+  --sand:#DEC199;
+  --caramel:#DD9645;
+  --rust:#BA3D04;
+  --olive:#49512C;
+  --slate:#6378A3;
+  --brick:#9E2524;
+  --ink:#120F05;
+  --background:var(--paper);
+  --surface:#EEE7DD;
+  --text:var(--olive);
+  --heading:var(--brick);
+  --display-heading:var(--heading);
+  --link:var(--rust);
+  --link-decoration:var(--link);
+  --link-background:var(--slate);
+  --link-text:#FFF;
+  --rule:var(--caramel);
+  --accent:var(--rust);
+  --focus:var(--link);
+  --font-body:"Mori",Arial,sans-serif;
+  --font-display:"Editorial New",Georgia,serif;
+  --gutter:clamp(20px,4.5vw,72px);
+  --max-width:1480px;
+  --space:8px;
+  color-scheme:light;
+  font-synthesis:none;
+}
+:root[data-theme="charcoal"] {
+  --background:var(--ink);
+  --surface:#26291C;
+  --text:#FFF;
+  --heading:var(--caramel);
+  --link:var(--caramel);
+  color-scheme:dark;
+}
+:root[data-theme="olive"] {
+  --background:var(--olive);
+  --surface:#3B4225;
+  --text:#FFF;
+  --heading:#FFF;
+  --display-heading:var(--caramel);
+  --link:#FFF;
+  --link-decoration:var(--caramel);
+  color-scheme:dark;
+}

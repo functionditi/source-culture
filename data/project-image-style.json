@@ -1,0 +1,8 @@
+{
+  "shadow": "#49512C",
+  "highlight": "#FFFFFF",
+  "noise": 8,
+  "autocontrast": 1,
+  "max_edge": 1800,
+  "quality": 92
+}

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" data-theme="olive">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Source Culture — a growing collection of everyday instructions, patterns, and ways of knowing.">
+  <meta name="theme-color" content="#49512C">
+  <meta property="og:title" content="Source Culture">
+  <meta property="og:description" content="A growing collection of everyday instructions, patterns, and ways of knowing.">
+  <title>source culture — everyday ways of knowing</title>
+  <script src="/js/theme.js"></script>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/fonts/PPMori-Regular_2.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="/assets/fonts/PPEditorialNew-Regular-BF644b214ff145f.otf" as="font" type="font/otf" crossorigin>
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/notebook.css">
+  <script defer src="/assets/vendor/p5-2.3.3.min.js"></script>
+  <script type="module" src="/js/app.js?v=prasa-background-grid-1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">skip to content</a>
+  <div class="demo-banner" id="mode-notice">local preview · projects, practices, and sources. submissions stay on this server.</div>
+  <header class="site-header">
+    <div class="site-brand">
+      <a class="wordmark" href="/" aria-label="Source Culture home"><span class="wordmark-bracket" aria-hidden="true">&lt;</span><span class="wordmark-source">source</span> <span class="wordmark-culture">culture</span><span class="wordmark-bracket" aria-hidden="true">&gt;</span></a>
+      <span class="wordmark-grid" data-wordmark-grid aria-hidden="true"></span>
+    </div>
+    <div class="header-tools">
+      <nav aria-label="Main navigation">
+        <a href="/explore" data-nav="explore">explore</a>
+        <a href="/sources" data-nav="sources">sources</a>
+        <a href="/about" data-nav="about">about</a>
+        <a class="nav-contribute" href="/contribute">share something you know <span aria-hidden="true">↗</span></a>
+      </nav>
+      <div class="appearance-picker" role="group" aria-label="Appearance">
+        <button type="button" data-theme-choice="white" aria-pressed="false"><span class="theme-swatch" aria-hidden="true"></span>white</button>
+        <button type="button" data-theme-choice="olive" aria-pressed="true"><span class="theme-swatch" aria-hidden="true"></span>olive</button>
+        <button type="button" data-theme-choice="charcoal" aria-pressed="false"><span class="theme-swatch" aria-hidden="true"></span>charcoal</button>
+      </div>
+    </div>
+  </header>
+  <main id="main" tabindex="-1"><p class="loading" role="status">opening the notebook…</p></main>
+  <footer class="site-footer">
+    <div class="footer-top"><a class="wordmark" href="/" aria-label="Source Culture home"><span class="wordmark-bracket" aria-hidden="true">&lt;</span><span class="wordmark-source">source</span> <span class="wordmark-culture">culture</span><span class="wordmark-bracket" aria-hidden="true">&gt;</span></a><p>knowledge lives in people.<br>let’s make room for it.</p><a href="/contribute" class="text-link">add your bit ↗</a></div>
+    <div class="footer-bottom"><span>a collective notebook of everyday computing</span><div><a href="/about#privacy">privacy & sharing</a><a href="/contribute?type=correction">corrections</a><a href="/manage">your contributions</a><a href="/admin">editor access</a></div><span>always a work in progress ↗</span></div>
+  </footer>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <noscript><p class="notice">Please enable JavaScript to explore this local demo. All interface text and controls use ordinary HTML; the optional pattern study is decorative.</p></noscript>
+</body>
+</html>

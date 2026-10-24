@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 290">
+  <title>Illustrative placeholder: rice grains arranged in a grid</title>
+  <desc>A simple drawing for a project image placeholder, not a photograph or project documentation.</desc>
+  <rect width="420" height="290" fill="#DEC199"/>
+  <defs><ellipse id="grain" rx="12" ry="3.8" fill="#F4F4F4" stroke="#120F05" stroke-width="1.2" transform="rotate(-28)"/></defs>
+  <g><use href="#grain" x="45" y="55"/><use href="#grain" x="100" y="55"/><use href="#grain" x="155" y="55"/><use href="#grain" x="210" y="55"/><use href="#grain" x="265" y="55"/><use href="#grain" x="320" y="55"/><use href="#grain" x="375" y="55"/></g>
+  <g><use href="#grain" x="45" y="100"/><use href="#grain" x="100" y="100"/><use href="#grain" x="155" y="100"/><use href="#grain" x="210" y="100"/><use href="#grain" x="265" y="100"/><use href="#grain" x="320" y="100"/><use href="#grain" x="375" y="100"/></g>
+  <g><use href="#grain" x="45" y="145"/><use href="#grain" x="100" y="145"/><use href="#grain" x="155" y="145"/><use href="#grain" x="210" y="145"/><use href="#grain" x="265" y="145"/><use href="#grain" x="320" y="145"/><use href="#grain" x="375" y="145"/></g>
+  <g><use href="#grain" x="45" y="190"/><use href="#grain" x="100" y="190"/><use href="#grain" x="155" y="190"/><use href="#grain" x="210" y="190"/><use href="#grain" x="265" y="190"/><use href="#grain" x="320" y="190"/><use href="#grain" x="375" y="190"/></g>
+  <g><use href="#grain" x="45" y="235"/><use href="#grain" x="100" y="235"/><use href="#grain" x="155" y="235"/><use href="#grain" x="210" y="235"/><use href="#grain" x="265" y="235"/><use href="#grain" x="320" y="235"/><use href="#grain" x="375" y="235"/></g>
+</svg>
