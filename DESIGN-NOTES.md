@@ -61,11 +61,11 @@ Typography updated at the user's request: PP Mori carries continuous body text, 
 
 The header and footer wordmarks read `<source culture>`, with real escaped angle brackets, PP Mori for “source,” and Editorial New italic for “culture.”
 
-A slim, 18 px-high two-row grid sits beside the header wordmark. It uses the same rectangle generator as the column fills and the supplied `[1,4,1,2,1]` widths. At the user's request, this logo grid alone uses two distinct random non-background colours from the palette. Both colours stay fixed across client-side navigation and appearance changes. It is decorative and stays visible on mobile; column fills retain their background-plus-accent rule.
+A slim, 32 px-high four-row grid sits beside the header wordmark. It uses the same rectangle generator as the column fills and the supplied `[1,4,1,2,1]` widths. At the user's request, this logo grid pairs the current page background with either brick red (`#9E2524`) or orange (`#BA3D04`), chosen once per page load. The accent stays fixed across client-side navigation and appearance changes. It is decorative and stays visible on mobile; column fills retain their background-plus-accent rule.
 
 The contribution headings “share a project or practice,” “suggest a source,” and “do it differently?” use the original slate-blue swatch (`#6378A3`) in every appearance. Vertical rules between reading columns and beside the shared repository overview have been removed, retaining the existing gutters and horizontal heading rules.
 
-The text-only wordmark pairs “source” in PP Mori regular with “culture” in PP Editorial New italic, aligned on their baseline in the header and footer. The favicon uses the same families as outlined lowercase initials. The starburst symbol is removed from all three locations.
+The text-only wordmark pairs “source” in PP Mori regular with “culture” in PP Editorial New italic, aligned on their baseline in the header and footer. The favicon uses a small, square version of the sketch's alternating grid, with `[1,4,1,2,1]` column widths and four equal rows in brick and paper. The starburst symbol is removed from all three locations.
 
 | Supplied file | Inspected family/style | Use |
 | --- | --- | --- |

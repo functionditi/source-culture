@@ -10,7 +10,7 @@ The header offers White, Olive, and Charcoal appearances, with Olive as the defa
 
 Shorter desktop columns fill their remaining height with alternating rectangular grids inspired by the supplied `drawHDB` study. Each grid pairs the active page background with a random palette accent. The background follows appearance changes and the accent stays fixed during hover, resizing, and theme changes. Accents exclude the three appearance backgrounds so the pair stays distinct. The artwork uses CSS grid, works without p5 or a brush library, and is hidden in the stacked mobile layout.
 
-The numbered column headings use larger Editorial New type, coloured caramel in dark appearances and brick in White. The three contribution section headings use the palette's slate blue (`#6378A3`). Column spacing remains open, without vertical divider rules. A slim four-row grid sits beside the header wordmark and stays visible on mobile; it pairs the current page background with a stable palette accent.
+The numbered column headings use larger Editorial New type, coloured caramel in dark appearances and brick in White. The three contribution section headings use the palette's slate blue (`#6378A3`). Column spacing remains open, without vertical divider rules. A slim four-row grid sits beside the header wordmark and stays visible on mobile; it pairs the current page background with either brick red or orange, chosen once per page load.
 
 Local-demo JavaScript and CSS revalidate on each visit. The changed image/grid module chain uses a version query to replace older cached code, including the former Prāsa placeholder renderer, on a normal reload.
 

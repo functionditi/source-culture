@@ -13,9 +13,9 @@ const arrangements = [
   floors: [...floors, ...floors],
 }));
 
-function readPalette() {
+function readPalette(tokens = paletteTokens) {
   const style = getComputedStyle(document.documentElement);
-  return paletteTokens.map(token => style.getPropertyValue(token).trim());
+  return tokens.map(token => style.getPropertyValue(token).trim());
 }
 
 function fillGrid(grid, { units, floors }, accent) {
@@ -50,7 +50,7 @@ export function mountColumnGrids(columns) {
 }
 
 export function mountWordmarkGrids(root) {
-  const palette = readPalette();
+  const palette = readPalette(['--brick', '--rust']);
   root.querySelectorAll('[data-wordmark-grid]').forEach(grid => {
     fillGrid(grid, { units: [1, 4, 1, 2, 1], floors: [1, 1, 1, 1] }, palette[Math.floor(Math.random() * palette.length)]);
   });
