@@ -28,7 +28,12 @@ export async function readResponse(response) {
 }
 
 export async function api(path, body) {
-  if (globalThis.document?.querySelector('meta[name="app-mode"]')?.content === 'static') {
+  const mode = globalThis.document?.querySelector('meta[name="app-mode"]')?.content;
+  if (mode === 'supabase') {
+    const { supabaseAPI } = await import('./supabase-api.js');
+    return supabaseAPI(path, body);
+  }
+  if (mode === 'static') {
     const { staticAPI } = await import('./static-api.js');
     return staticAPI(path, body);
   }
@@ -48,4 +53,9 @@ export async function session() {
 export async function signOut() {
   await api('/auth/logout', {});
   csrf = null;
+}
+export async function loadPrivateMedia(record) {
+  if (globalThis.document?.querySelector('meta[name="app-mode"]')?.content !== 'supabase') return record;
+  const { loadPrivateMedia } = await import('./supabase-api.js');
+  return loadPrivateMedia(record);
 }

@@ -1,0 +1,23 @@
+project_id = "source-culture"
+
+[auth]
+site_url = "http://127.0.0.1:8001/source-culture/"
+additional_redirect_urls = ["http://127.0.0.1:8001/source-culture/manage/"]
+
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+otp_expiry = 900
+
+[auth.email.template.magic_link]
+subject = "Your Source Culture sign-in link"
+content_path = "./supabase/templates/sign-in.html"
+
+[auth.email.template.confirmation]
+subject = "Your Source Culture sign-in link"
+content_path = "./supabase/templates/sign-in.html"
+
+# Public browsing and anonymous submissions share this endpoint. The function
+# independently verifies every supplied user JWT before privileged operations.
+[functions.source-culture]
+verify_jwt = false

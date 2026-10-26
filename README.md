@@ -1,6 +1,6 @@
 # Source Culture
 
-A collective notebook of everyday knowledge, with a full local app and a read-only GitHub Pages export. Built with semantic HTML, plain CSS, vanilla JavaScript ES modules, and a small p5.js pattern study. There is no frontend framework; only the Pages export needs a build step.
+A collective notebook of everyday knowledge, with a full local app and a GitHub Pages website that supports live contributions through Supabase. Built with semantic HTML, plain CSS, vanilla JavaScript ES modules, and a small p5.js pattern study. There is no frontend framework; only the Pages export needs a build step.
 
 The supplied fonts, primary palette (`palette/image copy.png`), and all three visual references inform the design. See [DESIGN-NOTES.md](DESIGN-NOTES.md).
 
@@ -15,6 +15,20 @@ The numbered column headings use larger Editorial New type, coloured caramel in 
 Local-demo JavaScript and CSS revalidate on each visit. The changed image/grid module chain uses a version query to replace older cached code, including the former Prāsa placeholder renderer, on a normal reload.
 
 The supplied homepage copy is arranged as a definition and four readings in column 1, a shared project repository in columns 2–3, and contribution guidance in column 4. The central columns take their featured project titles (“experiments with rice” and “Prāsa”) beneath one shared repository introduction. Repository filters select projects, practices, and experiments, updating those titles to match. The definition field carries the visitor's own text into the moderated contribution form; it does not submit or publish it automatically. The rice project has a local detail page, and Prāsa links to Dhulipalla's article.
+
+## Contributions with Supabase
+
+The existing GitHub Pages site can use Supabase for live contributions, email
+sign-in, private images, contributor revisions/withdrawals, and editor review.
+The hosted project, editor allowlist, Auth email configuration, and two public
+GitHub repository variables are configured. Follow [the Supabase setup guide](docs/SUPABASE.md)
+for deployment and verification. The website's existing
+design and form stages are retained. The local Python app remains available.
+
+With both `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` set in the Pages build,
+published content comes from Supabase and approvals appear without rebuilding.
+Without them, the build remains the read-only curated export described below.
+Private database/service credentials are never included in the website.
 
 ## Publish the read-only version to GitHub Pages
 

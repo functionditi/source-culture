@@ -6,10 +6,37 @@ from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
 from PIL import Image
-from server.build_pages import build
+from server.build_pages import build, public_supabase_config
 
 
 class PagesExportTests(unittest.TestCase):
+    def test_supabase_export_enables_forms_with_public_config_only(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / 'site'
+            key = 'sb_publishable_public_test_key_1234567890'
+            build(output, '/source-culture/', 'https://project-test.supabase.co', key)
+            for route in ['', 'contribute', 'manage', 'admin']:
+                page = (output / route / 'index.html').read_text()
+                self.assertIn('<meta name="app-mode" content="supabase">', page)
+                self.assertNotIn('contribution submissions are coming soon', page)
+            self.assertEqual(json.loads((output / 'data/supabase.json').read_text()), {
+                'url': 'https://project-test.supabase.co', 'publishableKey': key})
+            # Returning to the read-only build must remove old project config.
+            build(output, '/source-culture/')
+            self.assertFalse((output / 'data/supabase.json').exists())
+
+    def test_supabase_config_rejects_partial_settings_and_secret_keys(self):
+        import base64
+        def jwt(role):
+            return 'eyJhbGciOiJIUzI1NiJ9.' + base64.urlsafe_b64encode(json.dumps({'role': role}).encode()).decode().rstrip('=') + '.signature'
+        self.assertEqual(public_supabase_config('https://project-test.supabase.co', jwt('anon'))['publishableKey'], jwt('anon'))
+        for url, key in [('https://project-test.supabase.co', None), (None, 'public'),
+                         ('https://project-test.supabase.co', 'sb_secret_private'),
+                         ('https://project-test.supabase.co', jwt('service_role')),
+                         ('https://project-test.supabase.co.attacker.test', jwt('anon'))]:
+            with self.assertRaises(ValueError):
+                public_supabase_config(url, key)
+
     def test_export_serves_assets_and_deep_links_under_a_project_path(self):
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary) / 'site'

@@ -4,11 +4,14 @@ Run: python3 -m server.build_pages --base-path /source-culture/
 Only the editorial JSON and explicitly selected frontend assets are published.
 """
 import argparse
+import base64
 import json
+import os
 import re
 import shutil
 import tempfile
 from pathlib import Path
+from urllib.parse import urlparse
 
 from .project_images import render_project_image
 
@@ -18,9 +21,31 @@ SOURCE_TYPES = ['academic article', 'book or chapter', 'thesis or dissertation',
 PROJECT_IMAGES = {'rice-grid': 'experiments-with-rice.JPG', 'prasa': 'prasa-example.png'}
 
 
-def build(output, base_path='/source-culture/'):
+def public_supabase_config(url, key):
+    if not url and not key:
+        return None
+    if not url or not key:
+        raise ValueError('Set both SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY to enable contributions.')
+    parsed = urlparse(url)
+    if parsed.scheme != 'https' or not re.fullmatch(r'[a-z0-9-]+\.supabase\.co', parsed.netloc) or parsed.path not in ('', '/') or parsed.query or parsed.fragment:
+        raise ValueError('SUPABASE_URL must be your https://<project-ref>.supabase.co URL.')
+    valid_key = bool(re.fullmatch(r'sb_publishable_[A-Za-z0-9_-]{20,}', key))
+    if key.startswith('eyJ'):
+        try:
+            payload = key.split('.')[1]
+            valid_key = json.loads(base64.urlsafe_b64decode(payload + '=' * (-len(payload) % 4))).get('role') == 'anon'
+        except (ValueError, IndexError, UnicodeDecodeError):
+            valid_key = False
+    if not valid_key:
+        raise ValueError('Only a publishable key or legacy anon key can be included in the website. Never use a secret or service_role key.')
+    return {'url': url.rstrip('/'), 'publishableKey': key}
+
+
+def build(output, base_path='/source-culture/', supabase_url=None, supabase_key=None):
     if not re.fullmatch(r'/(?:[\w-]+/)*', base_path):
         raise ValueError('Base path must be / or a path such as /source-culture/.')
+    supabase = public_supabase_config(supabase_url, supabase_key)
+    mode = 'supabase' if supabase else 'static'
     output = Path(output).resolve()
     # The output is disposable; never allow it to replace source or runtime data.
     if output == ROOT or output in ROOT.parents or (output.is_relative_to(ROOT) and output != ROOT / 'dist'):
@@ -56,14 +81,17 @@ def build(output, base_path='/source-culture/'):
                 data[collection].append(entry)
     (output / 'data').mkdir()
     (output / 'data/public.json').write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
+    if supabase:
+        (output / 'data/supabase.json').write_text(json.dumps(supabase, indent=2) + '\n')
 
     page = (ROOT / 'index.html').read_text()
     page = page.replace('<meta name="app-base" content="/">',
-                        f'<meta name="app-base" content="{base_path}">\n  <meta name="app-mode" content="static">')
+                        f'<meta name="app-base" content="{base_path}">\n  <meta name="app-mode" content="{mode}">')
     page = re.sub(r'(\b(?:href|src)=")/(?!/)', lambda match: match[1] + base_path, page)
     page = page.replace('Please enable JavaScript to explore this local demo.', 'Please enable JavaScript to explore this notebook.')
-    page = page.replace('  <header class="site-header">',
-                        '  <div class="demo-banner" id="site-notice">this site is a work in progress. contribution submissions are coming soon!</div>\n  <header class="site-header">')
+    if not supabase:
+        page = page.replace('  <header class="site-header">',
+                            '  <div class="demo-banner" id="site-notice">this site is a work in progress. contribution submissions are coming soon!</div>\n  <header class="site-header">')
     routes = ['', 'explore', 'sources', 'about', 'contribute', 'manage', 'admin']
     routes += [f'practices/{entry["slug"]}' for entry in data['practices']]
     routes += [f'sources/{entry["slug"]}' for entry in data['sources']]
@@ -80,7 +108,7 @@ def main():
     parser.add_argument('--base-path', default='/source-culture/')
     parser.add_argument('--output', type=Path, default=ROOT / 'dist')
     args = parser.parse_args()
-    data = build(args.output, args.base_path)
+    data = build(args.output, args.base_path, os.getenv('SUPABASE_URL'), os.getenv('SUPABASE_PUBLISHABLE_KEY'))
     print(f'Built {len(data["practices"])} projects and {len(data["sources"])} sources in {args.output}')
 
 

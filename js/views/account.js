@@ -1,12 +1,13 @@
-import { api, session, signOut } from '../api.js';
+import { api, session, signOut, loadPrivateMedia } from '../api.js';
 import { e, date, heading, toast, showError, sourceReference, link } from '../ui.js';
+import { appURL } from '../paths.js';
 
 export async function account(root, admin, navigate, config) {
   const token = new URLSearchParams(location.hash.slice(1)).get('token');
-  let user = await session();
+  // Remove the link before any asynchronous requests, including session lookup.
+  if (token) history.replaceState({}, '', appURL('/manage'));
   if (token) {
     // Tokens stay in memory and are removed from browser history immediately.
-    history.replaceState({}, '', '/manage');
     root.innerHTML = `${heading('your private notebook.', 'This access link works once and expires after 15 minutes.', 'private contributor access')}<section class="login-layout"><h2>ready to sign in?</h2><p>Your access link opens a private session for your contributions.</p><p data-error class="error" role="alert" tabindex="-1" hidden></p><button class="button primary" id="verify-link">sign in with this link ↗</button></section>`;
     root.querySelector('#verify-link').addEventListener('click', async event => {
       event.currentTarget.disabled = true;
@@ -15,6 +16,7 @@ export async function account(root, admin, navigate, config) {
     });
     return;
   }
+  const user = await session();
   if (!user || (admin && !user.editor)) {
     root.innerHTML = `${heading(admin ? 'a little editorial care.' : 'your private notebook.', admin ? 'The review queue is available to explicitly authorised editors.' : 'Check a submission, respond to feedback, revise an account, or withdraw it.', admin ? 'private / editor access' : 'private / contributor access')}<section class="login-layout"><h2>${user ? 'an editor account is needed.' : 'a link, just for you.'}</h2><p>${user ? 'This account has no editorial role. Only emails configured by the server operator can review contributions.' : 'Enter the private email you used to contribute. Sign-in links expire after 15 minutes and can be used once.'}</p>${config.mode === 'demo' ? '<p class="notice">Local demo: no email is sent. The server operator can read sign-in links with <code>python3 server/app.py --outbox</code>. This outbox is never available through the website.</p>' : '<p class="notice">A private sign-in link will be delivered to your email. It works once and expires in 15 minutes.</p>'}<p data-error class="error" role="alert" tabindex="-1" hidden></p><form id="login-form"><div class="field"><label for="login-email">private email</label><input type="email" id="login-email" name="email" required autocomplete="email" value="${e(user?.email || '')}"></div><button class="button primary">request a sign-in link ↗</button></form>${user ? '<button class="plain-button small" id="sign-out">sign out of this account</button>' : ''}</section>`;
     root.querySelector('#login-form').addEventListener('submit', async event => {
@@ -28,7 +30,8 @@ export async function account(root, admin, navigate, config) {
   }
   const entries = await api(admin ? '/admin' : '/mine');
   const params = new URLSearchParams(location.search), kind = params.get('kind') || '', reviewId = params.get('review');
-  const selected = entries.find(x => x.id === reviewId);
+  let selected = entries.find(x => x.id === reviewId);
+  if (selected) selected = await loadPrivateMedia(selected);
   const practices = selected?.kind === 'source' ? await api('/practices') : [];
   const queue = entries.filter(x => !kind || (kind === 'revision' ? x.number > 1 : x.kind === kind));
   root.innerHTML = `${heading(admin ? 'the review notebook.' : 'the things you’ve shared.', admin ? 'Read the account, follow its sources, and check the permissions before publishing.' : 'Every account has room to grow. A revision leaves the published version visible until it is reviewed.', admin ? 'private / editorial queue' : 'private / your contributions')}<div class="login-state"><span>signed in as ${e(user.email)}</span><div>${user.editor ? `<a class="text-link" href="${admin ? '/manage' : '/admin'}">${admin ? 'your contributions' : 'editorial queue'} ↗</a> · ` : ''}<button class="plain-button" id="sign-out">sign out</button></div></div><section class="page-section">${admin ? `<nav class="queue-tabs" aria-label="Review queue types">${[['', 'all'], ['practice', 'new practices'], ['variation', 'variations'], ['source', 'sources'], ['correction', 'corrections'], ['revision', 'revisions']].map(([k, label]) => `<a class="filter-chip" href="/admin${k ? '?kind=' + k : ''}" ${kind === k ? 'aria-current="page"' : ''}>${label}</a>`).join('')}</nav>` : ''}<p data-error class="error" role="alert" tabindex="-1" hidden></p>${selected ? reviewHTML(selected, practices, config) : queue.length ? queue.map(item => itemHTML(item, admin)).join('') : '<div class="empty"><h2>a quiet notebook.</h2><p>No contributions here yet.</p><a href="/contribute" class="button">share something you know ↗</a></div>'}</section>`;
@@ -132,7 +135,7 @@ function reviewHTML(item, practices, config) {
         <p class="small">private contact: ${e(item.email)}<br>${item.email_verified ? 'verified email' : 'email not yet verified'}<br>${item.confirmed ? 'this specific account and its permissions are confirmed' : 'this account still needs contributor confirmation'}</p>
         <ul class="consent-list">
           <li>Publication permission: ${item.permission?.publication ? 'recorded for this revision' : 'no live permission record (seed data)'}</li>
-          <li>Entitlement and third-party permission: ${item.permission ? 'contributor confirmed' : 'not applicable to fictional seed data'}</li>
+          <li>Entitlement and third-party permission: ${item.permission ? 'contributor confirmed' : 'editorial listing; no contributor consent claimed'}</li>
           <li>Text reuse: ${e(c.reuse || 'no additional reuse licence')}</li>
           <li>Media: ${item.media.length} image(s), each with recorded permission</li>
         </ul>

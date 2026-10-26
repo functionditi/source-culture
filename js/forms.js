@@ -1,5 +1,6 @@
 import { api } from './api.js';
 import { e, heading, toast, showError, sourceReference } from './ui.js';
+import { scopeLinks } from './paths.js';
 
 const DRAFT_KEY = 'source-culture-deliberate-draft-v1';
 const prompts = ['measuring without a tool', 'remembering without writing', 'knowing when food is ready', 'a game learned by watching', 'organising turns', 'making something without written instructions'];
@@ -95,6 +96,7 @@ export async function contribute(root, config, navigate, user) {
     if (disposed) return;
     root.innerHTML = `${heading(editId ? 'a new revision.' : kind === 'variation' ? 'another way of doing.' : kind === 'source' ? 'add a connection.' : kind === 'correction' ? 'help us get it right.' : 'share something you know.', 'A little context goes a long way. Write in your own words; we’ll read it with care.', editId ? 'contribute / revise your account' : 'contribute / ' + kind)}<div class="contribution-layout"><aside class="contribution-sidebar"><h2>a little at a time.</h2><ol class="step-list">${labels.map((label, i) => `<li ${step === i ? 'aria-current="step"' : ''}>${e(label)}</li>`).join('')}</ol><p>Nothing is published automatically. An editor reviews your account, its context, and your sharing preferences.</p>${config.mode === 'demo' ? '<p>Local demo: submissions are stored in SQLite on this server. Sign-in links go to a private development outbox, not to your inbox.</p>' : '<p>Your contribution stays private until it is reviewed. Request a sign-in link to manage it through your email.</p>'}</aside><section class="form-panel">${data.prompt ? `<p class="prompt-context">your starting question: <strong>${e(data.prompt)}</strong></p>` : ''}${parent ? `<p class="prompt-context">${kind === 'variation' ? 'your variation sits alongside' : 'connected to'}: <a class="text-link" href="/${parent.kind === 'source' ? 'sources' : 'practices'}/${e(parent.slug)}">${e(parent.title)} ↗</a></p>` : ''}<h2 tabindex="-1" id="stage-title">${isPreview ? 'take a look before sharing.' : kind !== 'practice' && step === 0 ? ({ source: 'tell us about the source.', variation: 'what changes in your version?', correction: 'what needs a closer look?' })[kind] : ['what do you do?', 'how did you learn it?', 'show how it works.', 'what would you like to attach?', 'how should it be shared?'][kind === 'practice' ? step : labels[step] === 'sharing' ? 4 : 3]}</h2><p data-error class="error" role="alert" tabindex="-1" hidden></p><form id="contribution-form">${isPreview ? preview(data, kind) : contentForStage()}<div class="form-nav"><button type="button" class="button" id="form-back">← ${isPreview ? 'back to sharing' : step ? 'back' : 'choose contribution type'}</button><button type="submit" class="button primary">${isPreview ? editId ? 'submit revision for review ↗' : 'submit for review ↗' : step === labels.length - 1 ? 'preview contribution ↗' : 'continue →'}</button></div></form><div class="draft-actions"><button type="button" class="plain-button" id="save-draft">save a draft on this device</button><button type="button" class="plain-button" id="clear-draft">clear device draft</button></div><p class="small muted">Device drafts are saved only when you choose. Private email, permission checkboxes, images, and sign-in credentials are excluded.</p></section></div>`;
     const form = root.querySelector('#contribution-form');
+    scopeLinks(root);
     form.addEventListener('input', capture);
     form.addEventListener('change', event => {
       capture();
@@ -122,6 +124,7 @@ export async function contribute(root, config, navigate, user) {
           try { const result = await api('/auth/request', { email: data.email || user?.email }); toast(result.message); button.textContent = config.mode === 'demo' ? 'link requested — see the development outbox' : 'link requested — check your inbox'; }
           catch (error) { showError(root, error); button.disabled = false; }
         });
+        scopeLinks(root);
         window.scrollTo(0, 0); document.querySelector('#main').focus();
       } catch (error) { showError(root, error); submit.disabled = false; }
     });
