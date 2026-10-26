@@ -120,6 +120,11 @@ def run():
             assert c.evaluate('location.hash === "" && location.pathname === "/source-culture/manage"')
             c.click('#verify-link')
             c.wait('document.querySelector(".login-state") !== null')
+            # The old unversioned Manage HTML is still cached. Reloading after
+            # sign-in must keep the version marker while the token stays removed.
+            c.call('Page.reload')
+            c.wait('document.querySelector(".login-state") !== null')
+            assert c.evaluate('location.hash === "" && new URLSearchParams(location.search).get("v") === "contributions-20261026"')
             c.click('.login-state a')
             c.wait('location.pathname === "/source-culture/admin" && document.querySelector(".queue-tabs") !== null')
             c.call('Page.reload')

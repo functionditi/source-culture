@@ -4,14 +4,16 @@ import { appURL } from '../paths.js';
 
 export async function account(root, admin, navigate, config) {
   const token = new URLSearchParams(location.hash.slice(1)).get('token');
+  const version = new URLSearchParams(location.search).get('v');
+  const managePath = '/manage' + (version ? '?' + new URLSearchParams({ v: version }) : '');
   // Remove the link before any asynchronous requests, including session lookup.
-  if (token) history.replaceState({}, '', appURL('/manage'));
+  if (token) history.replaceState({}, '', appURL(managePath));
   if (token) {
     // Tokens stay in memory and are removed from browser history immediately.
     root.innerHTML = `${heading('your private notebook.', 'This access link works once and expires after 15 minutes.', 'private contributor access')}<section class="login-layout"><h2>ready to sign in?</h2><p>Your access link opens a private session for your contributions.</p><p data-error class="error" role="alert" tabindex="-1" hidden></p><button class="button primary" id="verify-link">sign in with this link ↗</button></section>`;
     root.querySelector('#verify-link').addEventListener('click', async event => {
       event.currentTarget.disabled = true;
-      try { await api('/auth/verify', { token }); await session(); navigate('/manage', { replace: true }); }
+      try { await api('/auth/verify', { token }); await session(); navigate(managePath, { replace: true }); }
       catch (error) { showError(root, error); root.querySelector('#verify-link').disabled = false; }
     });
     return;
