@@ -29,10 +29,14 @@ def run():
     chrome = os.getenv('CHROME_BIN', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')
     with tempfile.TemporaryDirectory(prefix='source-culture-supabase-browser-') as temporary:
         work = Path(temporary)
-        snapshot = build(work / 'public/source-culture', '/source-culture/',
-                         'https://source-test.supabase.co', 'sb_publishable_public_test_key_1234567890')
+        snapshot = build(work / 'public/source-culture', '/source-culture/')
         snapshot['config'].update(mode='supabase', relationships=RELATIONSHIPS)
-        server = ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, directory=str(work / 'public')))
+        class CachedPagesHandler(SimpleHTTPRequestHandler):
+            def end_headers(self):
+                self.send_header('Cache-Control', 'public, max-age=3600')
+                super().end_headers()
+
+        server = ThreadingHTTPServer(('127.0.0.1', 0), partial(CachedPagesHandler, directory=str(work / 'public')))
         threading.Thread(target=server.serve_forever, daemon=True).start()
         base = f'http://127.0.0.1:{server.server_port}/source-culture'
         profile = work / 'chrome'
@@ -82,6 +86,15 @@ def run():
             def submit():
                 c.evaluate('document.querySelector("#contribution-form").requestSubmit()')
 
+            # Reproduce a returning visitor: HTML and the complete static module
+            # graph are still fresh in the browser cache when live forms launch.
+            visit('/manage/', 'h1')
+            c.wait('document.body.innerText.includes("This version of Source Culture is read-only.")')
+            build(work / 'public/source-culture', '/source-culture/',
+                  'https://source-test.supabase.co', 'sb_publishable_public_test_key_1234567890')
+            visit('/manage/?v=contributions-20261026#token=synthetic-warm-cache', '#verify-link')
+            assert c.evaluate('location.hash === "" && location.pathname === "/source-culture/manage"')
+
             visit('/contribute/?type=practice', '#f-title')
             assert c.evaluate('document.querySelector("#mode-notice").hidden')
             c.fill('#f-title', 'A browser-tested practice')
@@ -103,7 +116,7 @@ def run():
             assert c.evaluate('document.querySelector(".confirmation a").pathname === "/source-culture/explore"')
             c.click('#request-management')
             c.wait('document.querySelector("#request-management").textContent.includes("check your inbox")')
-            visit('/manage/#token=synthetic-link-hash', '#verify-link')
+            visit('/manage/?v=contributions-20261026#token=synthetic-link-hash', '#verify-link')
             assert c.evaluate('location.hash === "" && location.pathname === "/source-culture/manage"')
             c.click('#verify-link')
             c.wait('document.querySelector(".login-state") !== null')
@@ -119,7 +132,7 @@ def run():
             assert c.evaluate('document.documentElement.scrollWidth <= innerWidth')
             screenshot = c.call('Page.captureScreenshot', {'format': 'png'})
             (artifacts / 'supabase-contribute-mobile.png').write_bytes(base64.b64decode(screenshot['data']))
-            print('PASS: Supabase Pages form, submission transport, project-scoped links, explicit token confirmation, callback scrubbing, session reload, editor route, privacy copy, and mobile layout. Backend transport is synthetic; no remote project or email was used.')
+            print('PASS: Returning visitors with cached read-only HTML/modules reach the sign-in button. Supabase form, submission transport, project-scoped links, token confirmation, session reload, editor route, privacy copy, and mobile layout also pass. Backend transport is synthetic; no remote project or email was used.')
         finally:
             process.terminate()
             process.wait(timeout=10)

@@ -84,9 +84,13 @@ In **Authentication → URL Configuration**, set:
 Enable email sign-in and sign-up, require email confirmation, and set **Email OTP
 Expiration** to **900 seconds**. Copy the contents of
 `supabase/templates/sign-in.html` into both **Confirm signup** and **Magic link**
-email templates. The template uses `{{ .RedirectTo }}#token={{ .TokenHash }}`:
+email templates. The template uses
+`{{ .RedirectTo }}?v=contributions-20261026#token={{ .TokenHash }}`:
 opening the page does not consume the link; the visitor must press the sign-in
 button. Keep the exact redirect allowlist rather than allowing arbitrary URLs.
+The non-secret version marker bypasses an older cached read-only HTML page.
+The Pages build versions the scripts, their nested imports, and styles together
+so browsers cannot mix JavaScript from the read-only and contribution releases.
 
 The local `supabase/config.toml` provides the same 15-minute expiry and templates
 for CLI development. It contains local URLs; do not push it directly to the

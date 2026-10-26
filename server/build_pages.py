@@ -5,6 +5,7 @@ Only the editorial JSON and explicitly selected frontend assets are published.
 """
 import argparse
 import base64
+import hashlib
 import json
 import os
 import re
@@ -59,6 +60,17 @@ def build(output, base_path='/source-culture/', supabase_url=None, supabase_key=
 
     for directory in ['css', 'js', 'assets/fonts', 'assets/illustrations', 'assets/vendor']:
         shutil.copytree(ROOT / directory, output / directory)
+    # Version the whole module graph together: changing only app.js leaves its
+    # imports eligible for reuse from an older read-only deployment.
+    digest = hashlib.sha256(json.dumps({'mode': mode, 'supabase': supabase}, sort_keys=True).encode())
+    for resource in sorted([*ROOT.glob('js/**/*.js'), *ROOT.glob('css/**/*.css'), ROOT / 'index.html']):
+        digest.update(resource.relative_to(ROOT).as_posix().encode() + b'\0' + resource.read_bytes())
+    version = digest.hexdigest()[:16]
+    for script in (output / 'js').rglob('*.js'):
+        script.write_text(re.sub(
+            r'''(['"])(\.{1,2}/[^'"\s]+\.js)(?:\?[^'"]*)?\1''',
+            lambda match: f'{match[1]}{match[2]}?v={version}{match[1]}',
+            script.read_text()))
     shutil.copy2(ROOT / 'favicon.svg', output / 'favicon.svg')
     (output / '.nojekyll').touch()
 
@@ -88,6 +100,8 @@ def build(output, base_path='/source-culture/', supabase_url=None, supabase_key=
     page = page.replace('<meta name="app-base" content="/">',
                         f'<meta name="app-base" content="{base_path}">\n  <meta name="app-mode" content="{mode}">')
     page = re.sub(r'(\b(?:href|src)=")/(?!/)', lambda match: match[1] + base_path, page)
+    page = re.sub(r'(\b(?:href|src)=")([^"?]+\.(?:js|css))(?:\?[^\"]*)?(\")',
+                  lambda match: f'{match[1]}{match[2]}?v={version}{match[3]}', page)
     page = page.replace('Please enable JavaScript to explore this local demo.', 'Please enable JavaScript to explore this notebook.')
     if not supabase:
         page = page.replace('  <header class="site-header">',

@@ -21,9 +21,32 @@ class PagesExportTests(unittest.TestCase):
                 self.assertNotIn('contribution submissions are coming soon', page)
             self.assertEqual(json.loads((output / 'data/supabase.json').read_text()), {
                 'url': 'https://project-test.supabase.co', 'publishableKey': key})
+            live_script = re.search(r'src="([^"]+/js/app.js[^\"]*)"', (output / 'index.html').read_text())[1]
             # Returning to the read-only build must remove old project config.
             build(output, '/source-culture/')
             self.assertFalse((output / 'data/supabase.json').exists())
+            static_script = re.search(r'src="([^"]+/js/app.js[^\"]*)"', (output / 'index.html').read_text())[1]
+            self.assertNotEqual(live_script, static_script)
+
+    def test_export_versions_nested_module_imports_with_the_entry_point(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / 'site'
+            build(output, '/source-culture/')
+            page = (output / 'index.html').read_text()
+            entry = re.search(r'src="([^"]+/js/app.js[^\"]*)"', page)[1]
+            version = urlparse(entry).query
+            self.assertRegex(version, r'^v=[0-9a-f]{16}$')
+            for stylesheet in re.findall(r'href="([^"]+\.css[^\"]*)"', page):
+                self.assertEqual(urlparse(stylesheet).query, version)
+            imported = []
+            for script in (output / 'js').rglob('*.js'):
+                for resource in re.findall(r'''['"](\.{1,2}/[^'"\s]+\.js(?:\?[^'"]*)?)['"]''', script.read_text()):
+                    parsed = urlparse(resource)
+                    self.assertEqual(parsed.query, version, (script.name, resource))
+                    self.assertTrue((script.parent / parsed.path).is_file(), resource)
+                    imported.append(resource)
+            self.assertTrue(any('supabase-api.js?' in item for item in imported))
+            self.assertTrue(any('../api.js?' in item for item in imported))
 
     def test_supabase_config_rejects_partial_settings_and_secret_keys(self):
         import base64
