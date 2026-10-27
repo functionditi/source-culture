@@ -14,6 +14,7 @@ export function about(root, config = {}) {
     <section class="about-intro" id="framing" aria-labelledby="about-intro-title">
       <h2 id="about-intro-title">knowledge lives in people.</h2>
       <p>Source Culture brings together projects, practices, and readings about <em>vernacular computing</em>: how people organise, measure, remember, and make decisions through everyday knowledge.</p>
+      <p>Source Culture was started and is maintained by Aditi Neti.</p>
     </section>
     <div class="about-overview">
       <section id="editorial" aria-labelledby="about-context-title">

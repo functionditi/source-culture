@@ -7,6 +7,7 @@ import { contribute } from './forms.js';
 import { account } from './views/account.js';
 import { mountWordmarkGrids } from './sketches/column-grids.js?v=prasa-background-grid-1';
 import { appBase, appURL, routePath, scopeLinks } from './paths.js';
+import { showWelcome } from './welcome.js';
 
 mountWordmarkGrids(document);
 
@@ -64,6 +65,10 @@ async function render({ scroll = true, focus = null } = {}) {
     if (location.hash && !location.hash.startsWith('#token=')) {
       const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
       target?.scrollIntoView();
+    }
+    if (path === '/') {
+      const closeWelcome = showWelcome(config), disposeView = cleanup;
+      cleanup = () => { closeWelcome(); disposeView(); };
     }
   } catch (error) {
     if (ticket !== navigation) return;

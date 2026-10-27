@@ -1,12 +1,13 @@
 // Runs before styles paint; only the appearance preference is stored.
 (() => {
   const key = 'source-culture-appearance';
-  const themes = ['white', 'olive', 'charcoal'];
-  const backgrounds = { white: '#F4F4F4', olive: '#49512C', charcoal: '#120F05' };
+  const themes = ['olive', 'charcoal'];
+  const backgrounds = { olive: '#49512C', charcoal: '#120F05' };
+  const normalise = value => themes.includes(value) ? value : null;
   const defaultTheme = 'olive';
   let preference;
   try { preference = localStorage.getItem(key); } catch { /* Device storage is optional. */ }
-  if (!themes.includes(preference)) preference = null;
+  preference = normalise(preference);
 
   const apply = theme => {
     document.documentElement.dataset.theme = theme;
@@ -28,7 +29,7 @@
   }, { once: true });
   window.addEventListener('storage', event => {
     if (event.key !== key && event.key !== null) return;
-    preference = themes.includes(event.newValue) ? event.newValue : null;
+    preference = normalise(event.newValue);
     apply(preference || defaultTheme);
   });
 })();

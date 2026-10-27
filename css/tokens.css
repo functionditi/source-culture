@@ -43,6 +43,7 @@
 }
 :root {
   --paper:#F4F4F4;
+  --yellow:#FAB42A; /* Yellow swatch from palette/image.png. */
   --sand:#DEC199;
   --caramel:#DD9645;
   --rust:#BA3D04;
@@ -50,8 +51,8 @@
   --slate:#6378A3;
   --brick:#9E2524;
   --ink:#120F05;
-  --background:var(--paper);
-  --surface:#EEE7DD;
+  --background:var(--sand);
+  --surface:#D6BA93; /* Sand with a little ink for inset surfaces. */
   --text:var(--olive);
   --heading:var(--brick);
   --display-heading:var(--heading);

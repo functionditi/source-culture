@@ -187,8 +187,7 @@ export async function notebookHome(root, config, navigate) {
       <p><a href="/contribute?type=practice&prompt=${encodeURIComponent('How do you measure without a measuring tool?')}">How do you measure without a measuring tool?</a><br>
       <a href="/contribute?type=practice&prompt=${encodeURIComponent('What have you learned by watching someone else?')}">What have you learned by watching someone else?</a><br>
       <a href="/contribute?type=practice&prompt=${encodeURIComponent('How do you know when something is ready?')}">How do you know when something is ready?</a></p>
-    </section>
-    <p class="contribution-permission">Contributions are reviewed before publication. Choose how you’d like to be credited, and share only material you have permission to make public.</p>`;
+    </section>`;
 
   root.innerHTML = `<nav class="notebook-jump" aria-label="Notebook sections">
       <button type="button" data-column-jump="notebook-introduction">01 about</button>

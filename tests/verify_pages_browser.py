@@ -62,9 +62,11 @@ def run():
                 assert c.evaluate('performance.getEntriesByType("resource").every(r => !new URL(r.name).pathname.startsWith("/api/"))')
                 assert not c.errors, c.errors
 
-            def visit(path, selector='h1'):
+            def visit(path, selector='h1', dismiss_welcome=True):
                 c.call('Page.navigate', {'url': base + path})
                 ready(selector)
+                if dismiss_welcome:
+                    c.evaluate('document.querySelector(".welcome-dialog[open] .welcome-close")?.click()')
 
             home_spacing = {}
 
@@ -85,8 +87,22 @@ def run():
                 (artifacts / name).write_bytes(base64.b64decode(data['data']))
 
             c.call('Emulation.setDeviceMetricsOverride', {'width': 1440, 'height': 1100, 'deviceScaleFactor': 1, 'mobile': False})
-            visit('/')
+            visit('/', dismiss_welcome=False)
             c.wait('document.querySelectorAll("[data-notebook-entry]").length === 2')
+            c.wait('document.querySelector(".welcome-dialog")?.open')
+            assert c.evaluate('document.querySelector(".welcome-dialog").matches(":modal") && document.querySelector(".welcome-dialog").contains(document.activeElement)')
+            assert c.evaluate('document.querySelector(".welcome-dialog a").pathname === "/source-culture/about"')
+            screenshot('welcome-desktop.png', 1440)
+            screenshot('welcome-mobile.png', 390)
+            screenshot('welcome-320.png', 320)
+            for _ in range(4):
+                c.call('Input.dispatchKeyEvent', {'type': 'keyDown', 'key': 'Tab', 'code': 'Tab', 'windowsVirtualKeyCode': 9})
+                c.call('Input.dispatchKeyEvent', {'type': 'keyUp', 'key': 'Tab', 'code': 'Tab', 'windowsVirtualKeyCode': 9})
+                assert c.evaluate('document.querySelector(".welcome-dialog").contains(document.activeElement)')
+            c.call('Input.dispatchKeyEvent', {'type': 'keyDown', 'key': 'Escape', 'code': 'Escape', 'windowsVirtualKeyCode': 27})
+            c.call('Input.dispatchKeyEvent', {'type': 'keyUp', 'key': 'Escape', 'code': 'Escape', 'windowsVirtualKeyCode': 27})
+            c.wait('document.querySelector(".welcome-dialog") === null')
+            assert c.evaluate('!document.documentElement.classList.contains("welcome-open")')
             c.wait('Array.from(document.querySelectorAll(".project-media img")).every(img => img.naturalWidth > 0)')
             assert c.evaluate('document.querySelector("#mode-notice").hidden')
             assert c.evaluate('document.querySelector("#definition-suggestion") === null')
@@ -96,6 +112,7 @@ def run():
             screenshot('pages-small-mobile.png', 320)
             c.click('[data-repository-filter="experiment"]')
             c.wait('document.querySelectorAll("[data-notebook-entry]").length === 1')
+            assert c.evaluate('document.querySelector(".welcome-dialog") === null')
             assert c.evaluate('location.pathname === "/source-culture/" && location.search === "?view=experiment"')
             c.click('[data-nav="explore"]')
             ready('#search-form')
@@ -183,6 +200,11 @@ def run():
             visit('/about/#privacy')
             assert c.evaluate('document.querySelector("#privacy").open')
             assert c.evaluate('document.querySelector("#privacy").textContent.includes("does not accept submissions")')
+            visit('/', dismiss_welcome=False)
+            c.wait('document.querySelector(".welcome-dialog")?.open')
+            for kind in ['mousePressed', 'mouseReleased']:
+                c.call('Input.dispatchMouseEvent', {'type': kind, 'x': 4, 'y': 4, 'button': 'left', 'clickCount': 1})
+            c.wait('document.querySelector(".welcome-dialog") === null')
             for path in ['/contribute/?type=practice', '/manage/', '/admin/']:
                 visit(path)
                 assert c.evaluate('document.querySelector("#main").textContent.includes("read-only")')

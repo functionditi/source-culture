@@ -54,6 +54,7 @@ export async function contribute(root, config, navigate, user) {
         <a href="/contribute?type=practice">Share a project or practice</a>
         <a href="/contribute?type=source">Suggest a source</a>
       </nav>
+      <p>Contributions are reviewed before publication. Choose how you’d like to be credited, and share only material you have permission to make public.</p>
       ${disclosure('ideas', 'Need an idea?', `<ul class="contribution-prompts">${prompts.map(p => `<li><a href="/contribute?type=practice&prompt=${encodeURIComponent(p)}">${e(p)}</a></li>`).join('')}</ul>`)}
       <p class="contribution-manage"><a href="/manage">Manage your contributions</a></p>
     </div>`;

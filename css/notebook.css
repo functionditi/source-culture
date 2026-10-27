@@ -1,7 +1,8 @@
 /* Four continuous reading columns, informed by negotiating-ungers.eu.
    The active column grows; all other text stays available in document order. */
 body[data-view="notebook"],
-body[data-view="browse"] {
+body[data-view="browse"],
+body:has(.contribution-page) {
   --gutter:clamp(18px,2vw,32px);
 }
 body[data-view="notebook"] main,
@@ -9,7 +10,8 @@ body[data-view="browse"] main {
   max-width:none;
 }
 body[data-view="notebook"] .site-header,
-body[data-view="browse"] .site-header {
+body[data-view="browse"] .site-header,
+body:has(.contribution-page) .site-header {
   max-width:none;
   padding-top:28px;
   padding-bottom:18px;

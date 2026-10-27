@@ -144,6 +144,7 @@ def run():
             def visit(path, selector='h1'):
                 c.call('Page.navigate', {'url': base + path})
                 c.wait(f'document.querySelector({json.dumps(selector)}) !== null && !document.querySelector(".loading")')
+                c.evaluate('document.querySelector(".welcome-dialog[open] .welcome-close")?.click()')
 
             def screenshot(name, width, height):
                 c.call('Emulation.setDeviceMetricsOverride', {'width': width, 'height': height, 'deviceScaleFactor': 1, 'mobile': width < 600})
@@ -166,6 +167,13 @@ def run():
             c.click('#retry-page')
             c.wait('document.querySelectorAll("[data-notebook-entry]").length === 2')
             c.wait('document.querySelector("#pattern-canvas canvas") !== null')
+            c.wait('document.querySelector(".welcome-dialog")?.open')
+            assert c.evaluate('document.querySelector(".welcome-dialog").matches(":modal")')
+            assert c.evaluate('document.querySelector(".welcome-dialog").textContent.includes("Feedback and contributions")')
+            assert c.evaluate('document.querySelector(".welcome-links a").getAttribute("href").startsWith("/contribute?type=correction")')
+            screenshot('welcome-live-desktop.png', 1440, 1000)
+            c.click('.welcome-continue')
+            c.wait('document.querySelector(".welcome-dialog") === null')
             if '--cache-only' in sys.argv:
                 assert c.evaluate('document.querySelector(".project-image-placeholder")!==null')
                 c.wait('document.querySelector("img[src=\\"/project-images/experiments-with-rice.JPG\\"]")?.naturalWidth === 1350')
@@ -303,7 +311,7 @@ def run():
                 time.sleep(.8)
                 assert check_grids() == colours
                 c.call('Input.dispatchMouseEvent', {'type': 'mouseMoved', 'x': 0, 'y': 0})
-                for theme in ['white', 'charcoal', 'olive']:
+                for theme in ['charcoal', 'olive']:
                     c.click(f'[data-theme-choice="{theme}"]')
                     assert check_grids() == colours
                     assert c.evaluate('document.querySelector(".wordmark-grid").getAttribute("style")') == wordmark_colours
@@ -344,12 +352,16 @@ def run():
             assert c.evaluate('document.documentElement.dataset.theme') == 'olive'
             c.call('Emulation.setEmulatedMedia', {'features': [{'name': 'prefers-color-scheme', 'value': 'light'}]})
             assert c.evaluate('document.documentElement.dataset.theme') == 'olive'
-            for theme, background in [('olive', 'rgb(73, 81, 44)'), ('charcoal', 'rgb(18, 15, 5)'), ('white', 'rgb(244, 244, 244)')]:
+            c.evaluate('localStorage.setItem("source-culture-appearance", "blue")')
+            visit('/')
+            assert c.evaluate('document.documentElement.dataset.theme') == 'olive'
+            assert c.evaluate('document.querySelectorAll("[data-theme-choice]").length') == 2
+            for theme, background in [('olive', 'rgb(73, 81, 44)'), ('charcoal', 'rgb(18, 15, 5)')]:
                 c.fill('#your-definition', 'Keep these words while changing appearance.')
                 c.click(f'[data-theme-choice="{theme}"]')
                 assert c.evaluate('document.querySelector("#your-definition").value.includes("Keep these words")')
                 assert c.evaluate('document.querySelectorAll("[data-theme-choice][aria-pressed=true]").length===1')
-                c.call('Emulation.setEmulatedMedia', {'features': [{'name': 'prefers-color-scheme', 'value': 'dark' if theme == 'white' else 'light'}]})
+                c.call('Emulation.setEmulatedMedia', {'features': [{'name': 'prefers-color-scheme', 'value': 'light'}]})
                 assert c.evaluate('document.documentElement.dataset.theme') == theme
                 visit('/')
                 assert c.evaluate('document.documentElement.dataset.theme') == theme
@@ -379,27 +391,22 @@ def run():
                 assert colors['link'] == 'rgb(255, 255, 255)'
                 assert colors['linkBackground'] == 'rgb(99, 120, 163)'
                 assert colors['linkDecoration'] == 'underline'
-                if theme == 'white':
-                    assert colors['body'] == 'rgb(73, 81, 44)'
-                    assert colors['heading'] == 'rgb(158, 37, 36)'
-                else:
-                    assert colors['body'] == 'rgb(255, 255, 255)'
-                    assert colors['heading'] == 'rgb(221, 150, 69)'
-                    assert c.evaluate('getComputedStyle(document.querySelector(".repository-overview h2")).color') == 'rgb(221, 150, 69)'
+                assert colors['body'] == 'rgb(255, 255, 255)'
+                assert colors['heading'] == 'rgb(221, 150, 69)'
+                assert c.evaluate('getComputedStyle(document.querySelector(".repository-overview h2")).color') == 'rgb(221, 150, 69)'
                 screenshot(f'appearance-{theme}-desktop.png', 1440, 1100)
                 screenshot(f'appearance-{theme}-mobile.png', 390, 844)
                 screenshot(f'appearance-{theme}-320.png', 320, 760)
-                if theme != 'white':
-                    visit('/contribute?type=practice', '#contribution-form')
-                    assert c.evaluate('document.documentElement.dataset.theme') == theme
-                    c.evaluate('document.querySelector("[name=title]").focus()')
-                    screenshot(f'appearance-{theme}-form.png', 390, 844)
-                    visit('/')
+                visit('/contribute?type=practice', '#contribution-form')
+                assert c.evaluate('document.documentElement.dataset.theme') == theme
+                c.evaluate('document.querySelector("[name=title]").focus()')
+                screenshot(f'appearance-{theme}-form.png', 390, 844)
+                visit('/')
             c.call('Emulation.setEmulatedMedia', {'features': [{'name': 'prefers-color-scheme', 'value': 'light'}]})
-            screenshot('appearance-white-tablet.png', 1024, 900)
+            screenshot('appearance-charcoal-tablet.png', 1024, 900)
             if '--appearance-only' in sys.argv:
                 assert not c.errors, c.errors
-                print('PASS: Olive default in both system modes, bracketed wordmark, pure-white dark reading text, caramel accents, white underlined links on #6378A3 in all three appearances, saved choice across reload/navigation, preserved form input, body/heading contrast, and desktop/tablet/mobile/320px layouts. Screenshots: test-results/appearance-*')
+                print('PASS: Olive default in both system modes, bracketed wordmark, pure-white dark reading text, caramel accents, white underlined links on #6378A3 in both appearances, saved choice across reload/navigation, preserved form input, body/heading contrast, and desktop/tablet/mobile/320px layouts. Screenshots: test-results/appearance-*')
                 return
             c.call('Emulation.setDeviceMetricsOverride', {'width': 1440, 'height': 1100, 'deviceScaleFactor': 1, 'mobile': False})
             c.evaluate('document.fonts.ready')
@@ -569,7 +576,7 @@ def run():
             assert c.evaluate('document.activeElement.tagName !== "BODY"')
             assert c.evaluate('getComputedStyle(document.querySelector("[data-reading-column]")).transitionDuration==="0s"')
             assert not c.errors, c.errors
-            print('PASS: all three appearances, system preference, saved appearance, palette contrast, expanding columns on hover/focus, persistent reading selection, touch navigation, desktop/mobile/320px, fonts, p5 and p5 failure, search refresh/back, citations, staged validation/recovery, editorial copy/readings, project filters, definition suggestion, rice detail, mixed reference fields, private preview, persistence, email access, verified consent, editorial publication, source-only/multiple connections, keyboard focus, reduced motion. Screenshots: test-results/')
+            print('PASS: both appearances, system preference, saved appearance, palette contrast, expanding columns on hover/focus, persistent reading selection, touch navigation, desktop/mobile/320px, fonts, p5 and p5 failure, search refresh/back, citations, staged validation/recovery, editorial copy/readings, project filters, definition suggestion, rice detail, mixed reference fields, private preview, persistence, email access, verified consent, editorial publication, source-only/multiple connections, keyboard focus, reduced motion. Screenshots: test-results/')
         finally:
             process.terminate()
             try: process.wait(timeout=8)
