@@ -4,7 +4,9 @@ A collective notebook of everyday knowledge, with a full local app and a GitHub 
 
 The supplied fonts, primary palette (`palette/image copy.png`), and all three visual references inform the design. See [DESIGN-NOTES.md](DESIGN-NOTES.md).
 
-The homepage and collection now follow the user's [Negotiating Ungers](https://www.negotiating-ungers.eu/) layout reference: continuous text and images in four reading columns. Hovering or focusing a desktop column widens it and enlarges its text. Heading buttons also select a column. On smaller screens the streams stack and section controls support touch navigation. The supplied PP Editorial New fonts give section headings and project titles an editorial voice; PP Mori carries body text, navigation, and forms.
+The homepage follows the user's [Negotiating Ungers](https://www.negotiating-ungers.eu/) layout reference: continuous text and images in four reading columns. Hovering or focusing a desktop column widens it and enlarges its text. Heading buttons also select a column. On smaller screens the streams stack and section controls support touch navigation. Explore uses a fixed two-column gallery that stacks on mobile. Each item shows an image, title, creator, and short description; full accounts stay on detail pages. Sources uses a plain reading list with title, author, year, and format. Both browse pages keep search visible. Explore keeps optional filters in a disclosure; Sources offers visible theme choices (All, Vernacular computing, Culture & power) and a format selector. Theme, format, and search combine, remain in the URL, and support keyboard navigation. The supplied PP Editorial New fonts give section headings and project titles an editorial voice; PP Mori carries body text, navigation, and forms.
+
+About uses the same page padding as Explore and Sources, with a short introduction, two brief sections, and expandable sharing/privacy guidance. Direct links to that guidance open the relevant section.
 
 The header offers White, Olive, and Charcoal appearances, with Olive as the default. Dark reading text is pure white (`#FFF`), with caramel display headings and accents. Olive uses white links with caramel underlines; Charcoal uses caramel links. White keeps olive text, brick headings, and pure-orange links. An explicit appearance choice is saved on the device and applies before the page paints. Changing appearance preserves open form input. The wordmark reads `<source culture>`.
 
@@ -23,7 +25,7 @@ sign-in, private images, contributor revisions/withdrawals, and editor review.
 The hosted project, editor allowlist, Auth email configuration, and two public
 GitHub repository variables are configured. Follow [the Supabase setup guide](docs/SUPABASE.md)
 for deployment and verification. The website's existing
-design and form stages are retained. The local Python app remains available.
+typography and palette are retained. The local Python app remains available.
 
 With both `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` set in the Pages build,
 published content comes from Supabase and approvals appear without rebuilding.
@@ -74,8 +76,8 @@ The server handles all documented routes and deep-link refreshes: `/`, `/explore
 ## Try the complete flow
 
 1. Read a practice and follow its numbered citation to the source and its annotated connection.
-2. Share a practice through the five stages. Firsthand accounts require neither an academic source nor a logic tag. Source-based accounts require an identified reference; print and oral sources work without a URL. You can add several references, image attachments, and external media links.
-3. Preview and submit. Only a successful database transaction produces confirmation. The account remains private.
+2. Share a practice through three stages: write your contribution, add context, then review and share. Only a title and account are needed to start. Context, citation details, and attachments expand when requested; collection descriptions default to an excerpt of the account. Firsthand accounts need no citation or topic tags. Source-based accounts require an identified reference; print and oral sources work without a URL.
+3. Preview, choose credit and permissions, and submit from the final stage. Only a successful database transaction produces confirmation. The account remains private.
 4. Request management access using the private email supplied. **The demo sends no email.** Read the private server-side development outbox:
 
    ```sh
@@ -112,11 +114,11 @@ Images currently use the server’s private filesystem as **local demo storage**
 
 ## Demo content and assets
 
-Seven fictional development practices, one linked variation, one text-only practice, and one explicitly fictional internal scenario source are in `data/demo.json`. There are no fabricated academic references, documentary photographs, testimonies, DOIs, or video links. SVGs are original explanatory illustrations and are labelled accordingly. Reference images are design inputs, never site content.
+Seven fictional examples (including one variation) and one fictional source remain in `data/demo.json` for automated tests. The normal local server does not load them and withdraws previously seeded fixture records on startup. Test harnesses opt in with `Store(..., include_fixtures=True)` in temporary databases. Reference images are design inputs, never site content.
 
 `data/editorial.json` separately contains the two user-supplied project listings and four real readings. These are not fictional testimony. Their author/title/date metadata was checked against the supplied publisher and institution pages. The paper first appeared online on 19 October 2025 and is assigned to the journal's 2026 volume. Records are loaded into SQLite idempotently for the local preview; existing revisions and withdrawals are never overwritten. An internal reserved owner identity identifies editorial records without claiming the named authors submitted them or granted any new permissions. Like the other local preview records, they remain excluded in production mode by default.
 
-The repository uses the supplied `assets/projects/experiments-with-rice.JPG` and `assets/projects/prasa-example.png`, with an automatic duotone-and-grain treatment across the homepage, collection, and detail views. The homepage excludes the fictional fixture entries, while `/explore` retains their explicit demo labels for testing the original practice flows. New contributor entries carry an `entry_type` of `project`, `practice`, or `experiment` and still require ordinary moderation.
+The repository uses the supplied `assets/projects/experiments-with-rice.JPG` and `assets/projects/prasa-example.png`, with an automatic duotone-and-grain treatment across the homepage, collection, and detail views. The normal homepage and `/explore` show curated entries and published contributions; fictional fixtures are confined to automated tests. New contributor entries carry an `entry_type` of `project`, `practice`, or `experiment` and still require ordinary moderation.
 
 Project images are displayed through `/project-images/<original filename>`. Pillow corrects EXIF orientation, limits the longest edge to 1800 px, converts to greyscale, normalises the tonal range, maps shadows to the palette's olive green `#49512C` and highlights to `#FFFFFF`, then adds stable monochromatic grain. Originals stay untouched. Treated WebP copies live in ignored `.runtime/project-images/` (or `DATA_DIR/project-images`) and are reused until the source contents or settings change. JPEG, PNG, WebP, and TIFF files are supported, including uppercase extensions. Only image files directly inside `assets/projects` can use this route; symlinks and traversal paths are rejected.
 

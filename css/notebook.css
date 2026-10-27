@@ -1,14 +1,17 @@
 /* Four continuous reading columns, informed by negotiating-ungers.eu.
    The active column grows; all other text stays available in document order. */
-body[data-view="notebook"] {
+body[data-view="notebook"],
+body[data-view="browse"] {
   --gutter:clamp(18px,2vw,32px);
 }
-body[data-view="notebook"] main {
+body[data-view="notebook"] main,
+body[data-view="browse"] main {
   max-width:none;
 }
-body[data-view="notebook"] .site-header {
+body[data-view="notebook"] .site-header,
+body[data-view="browse"] .site-header {
   max-width:none;
-  padding-top:18px;
+  padding-top:28px;
   padding-bottom:18px;
 }
 body[data-view="notebook"] .wordmark {
@@ -24,7 +27,8 @@ body[data-view="notebook"] .nav-contribute:hover {
   background:transparent;
   text-decoration:underline;
 }
-body[data-view="notebook"] .site-footer {
+body[data-view="notebook"] .site-footer,
+body[data-view="browse"] .site-footer {
   background:var(--background);
   margin-top:0;
   padding-top:20px;
@@ -32,7 +36,8 @@ body[data-view="notebook"] .site-footer {
 body[data-view="notebook"] .footer-top {
   display:none;
 }
-body[data-view="notebook"] .footer-bottom {
+body[data-view="notebook"] .footer-bottom,
+body[data-view="browse"] .footer-bottom {
   border-top:0;
   padding-top:0;
 }

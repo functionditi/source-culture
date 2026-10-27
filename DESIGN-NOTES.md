@@ -65,7 +65,7 @@ A slim, 32 px-high four-row grid sits beside the header wordmark. It uses the sa
 
 The contribution headings “share a project or practice,” “suggest a source,” and “do it differently?” use the original slate-blue swatch (`#6378A3`) in every appearance. Vertical rules between reading columns and beside the shared repository overview have been removed, retaining the existing gutters and horizontal heading rules.
 
-The text-only wordmark pairs “source” in PP Mori regular with “culture” in PP Editorial New italic, aligned on their baseline in the header and footer. The favicon uses a small, square version of the sketch's alternating grid, with `[1,4,1,2,1]` column widths and four equal rows in brick and paper. The starburst symbol is removed from all three locations.
+The text-only wordmark pairs “source” in PP Mori regular with “culture” in PP Editorial New italic, aligned on their baseline in the header and footer. The favicon uses a small, square version of the sketch's alternating grid, with `[1,4,1,2,1]` column widths and four equal rows in yellow (`#FFD43B`) and blue (`#0C76FF`). The starburst symbol is removed from all three locations.
 
 | Supplied file | Inspected family/style | Use |
 | --- | --- | --- |

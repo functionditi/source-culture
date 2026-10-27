@@ -14,7 +14,7 @@ from server.app import APIError, Handler, Store, ThreadingHTTPServer
 class StoreTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.store = Store(self.tmp.name, demo=True, editors=['editor@example.test'])
+        self.store = Store(self.tmp.name, demo=True, editors=['editor@example.test'], include_fixtures=True)
         self.owner = self.login('owner@example.test')
         self.other = self.login('other@example.test')
         self.editor = self.login('editor@example.test')
@@ -44,7 +44,7 @@ class StoreTests(unittest.TestCase):
         self.assertNotIn(ident, [p['id'] for p in self.store.collection('practice')])
         self.assertAPIError(403, self.store.private, None)
         self.assertAPIError(404, self.store.private, self.other, ident)
-        reopened = Store(self.tmp.name, demo=True)
+        reopened = Store(self.tmp.name, demo=True, include_fixtures=True)
         self.assertEqual(reopened.private(self.owner, ident)['content']['title'], 'A personal account')
         self.publish(ident)
         public = self.store.detail(ident, 'practice')
@@ -142,12 +142,32 @@ class StoreTests(unittest.TestCase):
         self.assertAPIError(404, prod.detail, 'rice-water', 'practice')
         self.assertAPIError(404, prod.detail, local_id, 'practice')
 
+    def test_default_preview_does_not_seed_fictional_examples(self):
+        with tempfile.TemporaryDirectory() as directory:
+            store = Store(directory)
+            self.assertEqual({entry['id'] for entry in store.collection('practice')}, {'editorial-rice', 'editorial-prasa'})
+            self.assertEqual(len(store.collection('source')), 4)
+            with store.connect() as db:
+                self.assertEqual(db.execute('SELECT COUNT(*) FROM entities WHERE id LIKE "demo-%"').fetchone()[0], 0)
+
+    def test_default_preview_retires_old_fixtures_and_preserves_contributions(self):
+        ident = self.store.submit(self.payload(), self.owner)['id']
+        self.publish(ident)
+        for _ in range(2):
+            store = Store(self.tmp.name)
+            self.assertEqual({entry['id'] for entry in store.collection('practice')}, {'editorial-rice', 'editorial-prasa', ident})
+            self.assertEqual(len(store.collection('source')), 4)
+            for slug in ['rice-water', 'rice-cup', 'knitting-repeat']:
+                self.assertAPIError(404, store.detail, slug, 'practice')
+            self.assertAPIError(404, store.detail, 'illustrative-rice-scenario', 'source')
+            self.assertEqual(store.private(self.owner, ident)['content']['title'], 'A personal account')
+
     def test_editorial_preview_is_idempotent_and_does_not_revive_withdrawals(self):
         self.assertEqual(self.store.detail('experiments-with-rice', 'practice')['display_name'], 'Aditi Neti')
         self.assertFalse(self.store.detail('prasa', 'practice').get('fictional', False))
         editorial = self.login('editorial-preview@example.invalid')
         self.store.withdraw(editorial, 'editorial-prasa')
-        reopened = Store(self.tmp.name, demo=True)
+        reopened = Store(self.tmp.name, demo=True, include_fixtures=True)
         self.assertAPIError(404, reopened.detail, 'prasa', 'practice')
         self.assertEqual(len([entry for entry in reopened.collection('practice') if entry['id'] == 'editorial-rice']), 1)
 
@@ -212,7 +232,7 @@ class HTTPTests(unittest.TestCase):
         cls.tmp = tempfile.TemporaryDirectory()
         cls.server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
         cls.base = 'http://127.0.0.1:' + str(cls.server.server_port)
-        cls.store = Store(cls.tmp.name, base_url=cls.base)
+        cls.store = Store(cls.tmp.name, base_url=cls.base, include_fixtures=True)
         cls.server.store = cls.store
         cls.thread = threading.Thread(target=cls.server.serve_forever, daemon=True)
         cls.thread.start()

@@ -3,6 +3,7 @@ import { e, date, card, heading, sourceReference, copy, link } from '../ui.js';
 import { projectMedia } from './notebook.js?v=prasa-background-grid-1';
 import { referencesHTML, citeDisclosure, bindCitation, videoHTML, bindVideo } from '../citations.js';
 import { appURL } from '../paths.js';
+import { browseHeader, browseSearch, filterSelect, bindBrowseSearch } from './browse.js';
 
 export async function practice(root, slug, navigate) {
   const [entry, all, sources] = await Promise.all([api('/practices/' + encodeURIComponent(slug)), api('/practices'), api('/sources')]);
@@ -23,9 +24,31 @@ export async function practice(root, slug, navigate) {
 export async function sources(root, config, navigate) {
   const params = new URLSearchParams(location.search), q = params.get('q') || '', type = params.get('type') || '', topic = params.get('topic') || '';
   const entries = await api('/sources');
-  const found = entries.filter(x => (!type || x.source.type === type) && (!topic || x.tags?.includes(topic)) && [x.title, x.source.creators, x.source.annotation, ...x.tags || []].join(' ').toLowerCase().includes(q.toLowerCase()));
-  root.innerHTML = `${heading('every story has connections.', 'Papers and personal accounts. Books, demonstrations, and things passed on in conversation. Sources help us ask better questions.', 'sources / a shared reading shelf')}<section class="page-section"><div class="section-heading"><p class="small">Source type describes a format. It is not a quality score.</p><a class="button primary" href="/contribute?type=source">suggest a source ↗</a></div><form class="search-row" role="search" id="source-search"><div class="search-field"><label for="q">search titles, creators, and notes</label><input name="q" id="q" type="search" value="${e(q)}" placeholder="find a source…"></div><div><label for="source-type">source type</label><select id="source-type" name="type"><option value="">all types</option>${config.source_types.map(t => `<option ${type === t ? 'selected' : ''}>${e(t)}</option>`).join('')}</select></div><div><label for="topic">topic</label><select id="topic" name="topic"><option value="">all topics</option>${config.activities.map(t => `<option ${topic === t ? 'selected' : ''}>${e(t)}</option>`).join('')}</select></div><button class="button dark">search ↗</button></form><p class="small results-meta">${found.length} ${found.length === 1 ? 'source' : 'sources'}${q || type || topic ? '<a href="/sources" class="text-link">reset filters ×</a>' : ''}</p><div class="source-list">${found.map(x => `<article class="source-card"><p class="source-type">${e(x.source.custom_type || x.source.type)}${x.demo && !x.editorial ? ' · illustrative demo' : ''}</p><h2 dir="auto"><a href="/sources/${e(x.slug)}">${e(x.title)}</a></h2><p>${e(x.source.creators || 'creator unknown')} · ${e(x.source.date || 'date unknown')}</p><p>${e(x.source.annotation)}</p><a class="text-link" href="/sources/${e(x.slug)}">follow this source ↗</a></article>`).join('')}</div>${!found.length ? '<div class="empty"><h2>a space on the shelf.</h2><p>Try a wider search, or suggest a source you find useful.</p><a class="button" href="/sources">reset filters ↗</a></div>' : ''}</section>`;
-  root.querySelector('#source-search').addEventListener('submit', event => { event.preventDefault(); navigate('/sources?' + new URLSearchParams(new FormData(event.currentTarget)), { scroll: false }); });
+  const themes = [
+    { id: 'vernacular', label: 'Vernacular computing', tags: ['vernacular computing', 'vernacular digitality', 'poetry', 'language', 'cultural knowledge', 'games and play', 'homebrew', 'hardware hacking'] },
+    { id: 'culture-power', label: 'Culture & power', tags: ['decolonial computing', 'knowledge', 'power', 'cosmotechnics', 'philosophy', 'technology'] },
+  ];
+  const theme = themes.find(item => item.id === params.get('theme'));
+  const found = entries.filter(entry => (!theme || entry.tags?.some(tag => theme.tags.includes(tag.toLocaleLowerCase()))) && (!type || entry.source.type === type) && (!topic || entry.tags?.includes(topic)) && [entry.title, entry.source.creators, entry.source.annotation, ...(entry.tags || [])].join(' ').toLocaleLowerCase().includes(q.toLocaleLowerCase()));
+  const availableFormats = new Set(entries.map(entry => entry.source.type));
+  if (type) availableFormats.add(type);
+  const controls = `<div class="source-filter-controls">
+    <fieldset class="source-theme-filters"><legend>Theme</legend>${[{ id: '', label: 'All' }, ...themes].map(item => `<label class="source-theme"><input type="radio" id="source-theme-${item.id || 'all'}" name="theme" value="${item.id}" ${item.id === (theme?.id || '') ? 'checked' : ''}><span>${e(item.label)}</span></label>`).join('')}</fieldset>
+    ${filterSelect('source-type', 'type', 'Format', type, [['', 'All formats'], ...config.source_types.filter(value => availableFormats.has(value)).map(value => [value, value])])}
+  </div>`;
+  root.innerHTML = `<div class="browse-page sources-page">
+    ${browseHeader('sources.', config.mode === 'static' ? null : { href: '/contribute?type=source', label: 'Suggest a source' })}
+    ${browseSearch({ id: 'source-search', inputId: 'q', query: q, placeholder: 'Search titles or authors', controls, hidden: topic ? `<input type="hidden" name="topic" value="${e(topic)}">` : '' })}
+    <p class="browse-results-meta" role="status"><span>${found.length} ${found.length === 1 ? 'source' : 'sources'}${topic ? ' · ' + e(topic) : ''}</span>${q || type || topic || theme ? '<a href="/sources">Clear filters</a>' : ''}</p>
+    <div class="source-list">${found.map(entry => {
+      const source = entry.source;
+      const year = source.date?.match(/\b\d{4}\b/)?.[0] || source.date;
+      const metadata = [source.creators, year, source.custom_type || source.type].filter(Boolean).join(' · ');
+      return `<article class="source-card"><h2 dir="auto"><a href="/sources/${e(entry.slug)}">${e(entry.title)}</a></h2><p class="source-byline" dir="auto">${e(metadata)}</p></article>`;
+    }).join('')}</div>
+    ${!found.length ? '<div class="browse-empty empty"><h2>No matches yet.</h2><p>Try another search or clear the filters.</p></div>' : ''}
+  </div>`;
+  bindBrowseSearch(root, 'source-search', '/sources', navigate);
 }
 
 export async function source(root, slug, navigate) {

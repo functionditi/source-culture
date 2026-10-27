@@ -17,11 +17,11 @@ export function navigate(url, options = {}) {
   if (options.replace) history.replaceState(options.state || {}, '', appURL(url)); else history.pushState(options.state || {}, '', appURL(url));
   render(options);
 }
-async function render({ scroll = true } = {}) {
+async function render({ scroll = true, focus = null } = {}) {
   const ticket = ++navigation;
   const path = routePath();
   cleanup?.(); cleanup = () => {};
-  document.body.dataset.view = ['/', '/explore'].includes(path) ? 'notebook' : 'page';
+  document.body.dataset.view = path === '/' ? 'notebook' : ['/explore', '/sources', '/about'].includes(path) ? 'browse' : 'page';
   document.title = 'source culture — everyday ways of knowing';
   document.querySelector('meta[name=description]').content = 'A growing collection of everyday instructions, patterns, and ways of knowing.';
   const isPrivate = ['/admin', '/manage', '/contribute'].includes(path);
@@ -60,6 +60,7 @@ async function render({ scroll = true } = {}) {
     main.replaceChildren(stage);
     cleanup = dispose || (() => {});
     if (scroll) { window.scrollTo(0, 0); main.focus({ preventScroll: true }); }
+    else if (focus) main.querySelector(focus)?.focus({ preventScroll: true });
     if (location.hash && !location.hash.startsWith('#token=')) {
       const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
       target?.scrollIntoView();

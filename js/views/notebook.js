@@ -163,9 +163,8 @@ export async function notebookHome(root, config, navigate) {
   const collection = `${cards(left)}${!shown.length ? '<p class="repository-empty">No ' + e(filter === 'all' ? 'entries' : filter + 's') + ' published here yet.</p>' : ''}`;
   const projects = `${cards(right)}${invitation}${pattern}`;
   const contribute = config.mode === 'static' ? `<div class="notebook-prose"><p>This notebook brings together projects, everyday practices, and readings about computation and culture.</p><p>This version is read-only. Contributions, source suggestions, corrections, and editor access are not open here.</p><p><a href="/explore">explore the collection →</a></p><p><a href="/sources">browse the reading shelf →</a></p></div>` : `<div class="notebook-prose">
-      <p>what do you know how to do—and how did you learn it?</p>
-      <p>Share a project, an everyday practice, or a reference that opens another way of thinking about computation.</p>
-      <p>You don’t need to write code or have a finished project.</p>
+      <p>This is a growing, living, evolving repository. And we would love your contribution.</p>
+      <p>(P.S. You don’t need to write code or have a finished project.) </p>
     </div>
     <section class="notebook-block notebook-prose">
       <h2 class="notebook-subheading contribution-heading">share a project or practice</h2>

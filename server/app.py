@@ -61,7 +61,7 @@ class APIError(Exception):
 
 
 class Store:
-    def __init__(self, directory, demo=True, editors=(), base_url='http://127.0.0.1:8000'):
+    def __init__(self, directory, demo=True, editors=(), base_url='http://127.0.0.1:8000', *, include_fixtures=False):
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
         self.uploads = self.directory / 'uploads'
@@ -71,7 +71,10 @@ class Store:
         with self.connect() as db:
             db.executescript((ROOT / 'server/migrations/001_initial.sql').read_text())
         if demo:
-            self.seed()
+            if include_fixtures:
+                self.seed()
+            else:
+                self.withdraw_fixtures()
             self.seed_editorial()
 
     def connect(self):
@@ -506,6 +509,17 @@ class Store:
             db.execute('UPDATE revisions SET state=? WHERE id=?', (action, rev['id']))
             db.execute('INSERT INTO reviews VALUES (?,?,?,?,?,?,?)', (uid(), entity_id, rev['id'], user['id'], action, feedback, now()))
         return {'message': 'Review recorded: ' + action + '.'}
+
+    def withdraw_fixtures(self):
+        """Retire only the known fictional records from older local previews."""
+        seed = json.loads((ROOT / 'data/demo.json').read_text())
+        identifiers = [entry['id'] for entry in seed['sources'] + seed['practices']]
+        if not identifiers:
+            return
+        with self.connect() as db:
+            db.execute(
+                'UPDATE entities SET status="withdrawn" WHERE demo=1 AND status!="withdrawn" AND id IN ('
+                + ','.join('?' for _ in identifiers) + ')', identifiers)
 
     def seed(self):
         seed = json.loads((ROOT / 'data/demo.json').read_text())

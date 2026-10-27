@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36">
   <title>Source Culture uneven grid</title>
   <!-- Same 1:4:1:2:1 column proportions and four alternating rows as the sketch. -->
-  <rect width="36" height="36" fill="#F4F4F4"/>
-  <path fill="#9E2524" d="M4 0h16v9H4z M24 0h8v9h-8z
+  <rect width="36" height="36" fill="#FFD43B"/>
+  <path fill="#0C76FF" d="M4 0h16v9H4z M24 0h8v9h-8z
     M0 9h4v9H0z M20 9h4v9h-4z M32 9h4v9h-4z
     M4 18h16v9H4z M24 18h8v9h-8z
     M0 27h4v9H0z M20 27h4v9h-4z M32 27h4v9h-4z"/>
